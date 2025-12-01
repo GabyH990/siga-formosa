@@ -9,6 +9,8 @@ use App\Models\AcademicState;
 use App\Models\Subject;
 use App\Models\Commission;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 class AlumnoController extends Controller
 {
@@ -19,7 +21,7 @@ class AlumnoController extends Controller
      */
     private function getActiveCareerId(): ?int
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         if (session()->has('active_career_id')) {
             return (int) session('active_career_id');
@@ -177,30 +179,34 @@ class AlumnoController extends Controller
     /**
      * Guarda / actualiza un estado académico de ese alumno.
      */
-    public function guardarEstado(Request $request, $id)
-    {
-        $student = Student::findOrFail($id);
+public function guardarEstado(Request $request, $id)
+{
+    $student = Student::findOrFail($id);
 
-        $validated = $request->validate([
-            'subject_id'          => ['required', 'exists:subjects,id'],
-            'commission_nombre'   => ['nullable', 'in:1.1,1.2,1.3,2.1,2.2,2.3'],
-            'estado'              => ['required', 'in:Cursando,Regular,Aprobada'],
-            'anio_regularizacion' => ['nullable', 'integer'],
-            'tipo_aprobacion'     => ['nullable', 'in:directa,final'],
-            'libro'               => ['nullable', 'string', 'max:50'],
-            'acta'                => ['nullable', 'string', 'max:50'],
-            'tomo'                => ['nullable', 'string', 'max:50'],
-            'nota_final'          => ['nullable', 'numeric'],
-            'observaciones'       => ['nullable', 'string'],
-        ]);
+    $validated = $request->validate([
+        'subject_id'          => ['required', 'exists:subjects,id'],
+        'commission_nombre'   => ['nullable', 'in:1.1,1.2,1.3,2.1,2.2,2.3'],
+        'estado'              => ['required', 'in:Cursando,Regular,Aprobada'],
+        'anio_regularizacion' => ['nullable', 'integer'],
+        'tipo_aprobacion'     => ['nullable', 'in:directa,final'],
+        'libro'               => ['nullable', 'string', 'max:50'],
+        'acta'                => ['nullable', 'string', 'max:50'],
+        'tomo'                => ['nullable', 'string', 'max:50'],
+        'nota_final'          => ['nullable', 'numeric'],
+        'observaciones'       => ['nullable', 'string'],
+    ]);
 
-        // Resolver / crear la comisión para esa materia
+    DB::transaction(function () use ($student, $validated) {
+
+        // --------------------------------------------------
+        // 1) Resolver / crear comisión (si se indicó)
+        // --------------------------------------------------
         $commissionId = null;
 
         if (!empty($validated['commission_nombre'])) {
             $commissionNombre = $validated['commission_nombre'];
 
-            // Primera parte (1.x o 2.x) para inferir periodo
+            // Primera parte (1.x o 2.x) para inferir período
             $periodo = str_starts_with($commissionNombre, '1.')
                 ? '1C'
                 : '2C';
@@ -218,7 +224,7 @@ class AlumnoController extends Controller
 
             $commissionId = $commission->id;
 
-            // Si está Cursando, lo enganchamos a esa comisión (para Armar Cursada)
+            // Si está Cursando, lo enganchamos a esa comisión (para Asistencias / Armar cursada)
             if ($validated['estado'] === 'Cursando') {
                 $commission->students()->syncWithoutDetaching([
                     $student->id => ['activo' => true],
@@ -226,14 +232,18 @@ class AlumnoController extends Controller
             }
         }
 
-        // Guardar / actualizar estado académico
-        AcademicState::updateOrCreate(
-            [
-                'student_id'    => $student->id,
-                'subject_id'    => $validated['subject_id'],
-                'commission_id' => $commissionId,
-            ],
-            [
+        // --------------------------------------------------
+        // 2) Buscar ÚNICO estado por (alumno, materia)
+        //    y actualizarlo en lugar de crear filas nuevas
+        // --------------------------------------------------
+        $estadoExistente = AcademicState::where('student_id', $student->id)
+            ->where('subject_id', $validated['subject_id'])
+            ->first();
+
+        if ($estadoExistente) {
+            // Actualizo la misma fila (Cursando -> Regular -> Aprobada)
+            $estadoExistente->update([
+                'commission_id'       => $commissionId,
                 'estado'              => $validated['estado'],
                 'anio_regularizacion' => $validated['anio_regularizacion'] ?? null,
                 'tipo_aprobacion'     => $validated['tipo_aprobacion'] ?? null,
@@ -242,11 +252,41 @@ class AlumnoController extends Controller
                 'tomo'                => $validated['tomo'] ?? null,
                 'nota_final'          => $validated['nota_final'] ?? null,
                 'observaciones'       => $validated['observaciones'] ?? null,
-            ]
-        );
+            ]);
 
-        return redirect()
-            ->route('alumnos.estado', $student->id)
-            ->with('success', 'Estado académico actualizado correctamente.');
-    }
+            $estadoId = $estadoExistente->id;
+        } else {
+            // Primera vez que se carga esa materia para este alumno
+            $nuevo = AcademicState::create([
+                'student_id'          => $student->id,
+                'subject_id'          => $validated['subject_id'],
+                'commission_id'       => $commissionId,
+                'estado'              => $validated['estado'],
+                'anio_regularizacion' => $validated['anio_regularizacion'] ?? null,
+                'tipo_aprobacion'     => $validated['tipo_aprobacion'] ?? null,
+                'libro'               => $validated['libro'] ?? null,
+                'acta'                => $validated['acta'] ?? null,
+                'tomo'                => $validated['tomo'] ?? null,
+                'nota_final'          => $validated['nota_final'] ?? null,
+                'observaciones'       => $validated['observaciones'] ?? null,
+            ]);
+
+            $estadoId = $nuevo->id;
+        }
+
+        // --------------------------------------------------
+        // 3) Limpieza de basura histórica:
+        //    por si ya existían duplicados, dejamos SOLO uno
+        // --------------------------------------------------
+        AcademicState::where('student_id', $student->id)
+            ->where('subject_id', $validated['subject_id'])
+            ->where('id', '!=', $estadoId)
+            ->delete();
+    });
+
+    return redirect()
+        ->route('alumnos.estado', $student->id)
+        ->with('success', 'Estado académico actualizado correctamente.');
+}
+
 }
