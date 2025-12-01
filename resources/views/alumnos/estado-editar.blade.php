@@ -1,0 +1,259 @@
+<x-app-interno-layout>
+    <x-slot name="header">
+        Cargar / editar estado de {{ $student->apellido }}, {{ $student->nombre }}
+    </x-slot>
+
+    <div class="space-y-6" x-data="{ estado: 'Regular', tipoAprobacion: '' }">
+        {{-- Datos del alumno --}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                {{ $student->apellido }}, {{ $student->nombre }}
+            </h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+                Legajo:
+                <span class="font-semibold">{{ $student->legajo }}</span>
+                @if($student->career)
+                    · Carrera:
+                    <span class="font-semibold">
+                        {{ $student->career->codigo }} - {{ $student->career->nombre }}
+                    </span>
+                @endif
+                @if($student->cohorte)
+                    · Cohorte:
+                    <span class="font-semibold">{{ $student->cohorte }}</span>
+                @endif
+            </p>
+        </div>
+
+        {{-- Formulario de carga / edición --}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Cargar / editar estado de una materia
+            </h3>
+
+            <form method="POST" action="{{ route('alumnos.estado.guardar', $student->id) }}" class="space-y-4">
+                @csrf
+
+                {{-- Materia --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Materia
+                    </label>
+                    <select name="subject_id"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   focus:border-blue-500 focus:ring-blue-500
+                                   dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <option value="">Seleccione materia</option>
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject->id }}">{{ $subject->nombre }}</option>
+                        @endforeach
+                    </select>
+                    @error('subject_id')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Comisión (usa nombres fijos: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3) --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Comisión (opcional)
+                    </label>
+                    <select name="commission_nombre"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   focus:border-blue-500 focus:ring-blue-500
+                                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">Sin comisión específica</option>
+                        @foreach($commissionNames as $nombre)
+                            <option value="{{ $nombre }}">{{ $nombre }}</option>
+                        @endforeach
+                    </select>
+                    @error('commission_nombre')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Estado --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Estado
+                    </label>
+                    <select name="estado"
+                            x-model="estado"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   focus:border-blue-500 focus:ring-blue-500
+                                   dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <option value="Cursando">Cursando</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Aprobada">Aprobada</option>
+                    </select>
+                    @error('estado')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Año de regularización (solo cuando es Regular) --}}
+                <div x-show="estado === 'Regular'" x-cloak>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Año de regularización
+                    </label>
+                    <input type="number" name="anio_regularizacion"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                  focus:border-blue-500 focus:ring-blue-500
+                                  dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    @error('anio_regularizacion')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Datos de aprobación (solo cuando es Aprobada) --}}
+                <div x-show="estado === 'Aprobada'" x-cloak class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Datos de aprobación
+                    </h4>
+
+                    {{-- Tipo de aprobación --}}
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Tipo de aprobación
+                        </label>
+                        <select name="tipo_aprobacion"
+                                x-model="tipoAprobacion"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                       focus:border-blue-500 focus:ring-blue-500
+                                       dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Seleccione...</option>
+                            <option value="directa">Aprobación directa</option>
+                            <option value="final">Examen final</option>
+                        </select>
+                        @error('tipo_aprobacion')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Libro / Acta / Tomo / Nota (solo si hay tipo aprobación) --}}
+                    <div x-show="tipoAprobacion !== ''" x-cloak class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Libro
+                            </label>
+                            <input type="text" name="libro"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                          focus:border-blue-500 focus:ring-blue-500
+                                          dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Acta
+                            </label>
+                            <input type="text" name="acta"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                          focus:border-blue-500 focus:ring-blue-500
+                                          dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Tomo
+                            </label>
+                            <input type="text" name="tomo"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                          focus:border-blue-500 focus:ring-blue-500
+                                          dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Nota final
+                            </label>
+                            <input type="number" step="0.01" name="nota_final"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                          focus:border-blue-500 focus:ring-blue-500
+                                          dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Observaciones --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Observaciones (opcional)
+                    </label>
+                    <textarea name="observaciones" rows="3"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                     focus:border-blue-500 focus:ring-blue-500
+                                     dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                    @error('observaciones')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Botones --}}
+                <div class="flex justify-end gap-3 pt-2">
+                    <a href="{{ route('alumnos.estado', $student->id) }}"
+                       class="px-4 py-2 rounded-md text-sm font-semibold border
+                              border-gray-300 text-gray-700 bg-white hover:bg-gray-50
+                              dark:border-gray-600 dark:text-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-4 py-2 rounded-md text-sm font-semibold text-white
+                                   bg-blue-600 hover:bg-blue-700">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {{-- Resumen de estados ya cargados --}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Estados cargados para este alumno
+            </h3>
+
+            @if($estados->isEmpty())
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Aún no se cargaron estados académicos para este alumno.
+                </p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs md:text-sm">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Materia</th>
+                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Comisión</th>
+                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Estado</th>
+                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Tipo aprobación</th>
+                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Nota</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($estados as $estado)
+                                <tr>
+                                    <td class="px-4 py-2">
+                                        {{ $estado->subject->nombre ?? 'Materia' }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ $estado->commission->nombre ?? '-' }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ $estado->estado }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        @if($estado->tipo_aprobacion === 'directa')
+                                            Aprobación directa
+                                        @elseif($estado->tipo_aprobacion === 'final')
+                                            Examen final
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ $estado->nota_final ?? '-' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+</x-app-interno-layout>
