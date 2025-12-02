@@ -6,23 +6,23 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Tomar Asistencia -->
         <a href="{{ route('asistencias.registros') }}"
-           class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition duration-200 border-t-4 border-blue-500">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Registros</h3>
-            <p class="text-gray-600 dark:text-gray-400 text-sm">Tomar asistencia diaria.</p>
+           class="block bg-white/20 backdrop-blur-md border border-white/30 shadow rounded-lg p-6 hover:bg-white/30 transition border-t-4 border-cyan-500">
+            <h3 class="text-xl font-semibold text-white">Registros</h3>
+            <p class="mt-2 text-sm text-gray-100">Tomar asistencia diaria.</p>
         </a>
 
         <!-- Reportes -->
         <a href="{{ route('asistencias.reportes') }}"
-           class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition duration-200 border-t-4 border-green-500">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Reportes</h3>
-            <p class="text-gray-600 dark:text-gray-400 text-sm">Ver porcentajes y cerrar cursadas.</p>
+           class="block bg-white/20 backdrop-blur-md border border-white/30 shadow rounded-lg p-6 hover:bg-white/30 transition border-t-4 border-emerald-500">
+            <h3 class="text-xl font-semibold text-white">Reportes</h3>
+            <p class="mt-2 text-sm text-gray-100">Ver porcentajes y cerrar cursadas.</p>
         </a>
 
         <!-- Armar Cursada -->
         <a href="{{ route('asistencias.armar-cursada') }}"
-           class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition duration-200 border-t-4 border-purple-500">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Armar Cursada</h3>
-            <p class="text-gray-600 dark:text-gray-400 text-sm">Gestionar alumnos por comisión.</p>
+           class="block bg-white/20 backdrop-blur-md border border-white/30 shadow rounded-lg p-6 hover:bg-white/30 transition border-t-4 border-purple-600">
+            <h3 class="text-xl font-semibold text-white">Armar Cursada</h3>
+            <p class="mt-2 text-sm text-gray-100">Gestionar alumnos por comisión.</p>
         </a>
     </div>
 </x-app-interno-layout>

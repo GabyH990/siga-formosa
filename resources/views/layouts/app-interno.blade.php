@@ -16,17 +16,27 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900" x-data="{ dirty: false }">
+<body class="font-sans antialiased text-white min-h-screen" x-data="{ dirty: false }">
 
-    <!-- Top Bar -->
+    <!-- =========== VIDEO DE FONDO =========== -->
+    <video autoplay muted loop playsinline
+        class="fixed top-0 left-0 w-full h-full object-cover -z-20">
+        <source src="{{ asset('image/fondo_animado.webm') }}" type="video/webm">
+    </video>
+
+    <!-- =========== LÁMINA SUAVE =========== -->
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-[1px] -z-10"></div>
+
+    <!-- =========== NAVBAR INTERNO SIGA =========== -->
     <header
-        class="bg-white dark:bg-gray-800 shadow fixed w-full top-0 z-50 h-16 flex items-center justify-between px-4">
-        <!-- Left: Back Button -->
+        class="backdrop-blur-lg bg-black/30 fixed w-full top-0 z-50 h-16 flex items-center justify-between px-6 border-b border-white/10">
+
+        <!-- IZQUIERDA: Botón atrás -->
         <div class="flex-shrink-0 w-24">
             @if(url()->previous() !== url()->current() && url()->previous() !== route('login') && request()->path() !== '/')
                 <a href="{{ url()->previous() }}"
                     @click.prevent="if(dirty) { if(confirm('¿Salir sin guardar?')) window.location.href = '{{ url()->previous() }}'; } else { window.location.href = '{{ url()->previous() }}'; }"
-                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1">
+                    class="text-gray-200 hover:text-white flex items-center gap-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -36,56 +46,67 @@
             @endif
         </div>
 
-        <!-- Center: Title -->
+        <!-- CENTRO: SIGA UTN -->
         <div class="flex-grow text-center">
-            <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                {{ $header ?? 'SIGA-Formosa' }}
+            <h1 class="text-2xl font-semibold drop-shadow-md">
+                SIGA – UTN
             </h1>
         </div>
 
-        <!-- Right: User Menu -->
-        <div class="flex-shrink-0 w-24 flex justify-end">
+        <!-- DERECHA: Usuario + menú -->
+        <div class="flex-shrink-0">
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
-                    class="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition duration-150 ease-in-out">
+                    class="flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-white transition">
+
                     <div>{{ Auth::user()->name }}</div>
+
                     @if(Auth::user()->foto)
-                        <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover">
+                        <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar"
+                             class="w-8 h-8 rounded-full object-cover">
                     @else
-                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
                     @endif
                 </button>
 
                 <div x-show="open" @click.away="open = false"
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50"
+                    class="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur text-gray-800 rounded-md shadow-lg py-1 z-50"
                     style="display: none;">
+
                     <a href="{{ url('/perfil') }}"
-                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
+                        class="block px-4 py-2 text-sm hover:bg-gray-100">
+                        Perfil
+                    </a>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                             Cerrar sesión
                         </button>
                     </form>
+
                 </div>
             </div>
         </div>
+
     </header>
 
-    <!-- Main Content -->
-    <main class="pt-20 pb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- =========== CONTENIDO DEL PANEL =========== -->
+    <main class="pt-24 pb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
         <!-- Flash Messages -->
         @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+            <div class="mb-4 bg-green-100/80 border border-green-400 text-green-900 px-4 py-3 rounded relative">
+                {{ session('success') }}
             </div>
         @endif
+
         @if(session('error'))
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
+            <div class="mb-4 bg-red-100/80 border border-red-400 text-red-900 px-4 py-3 rounded relative">
+                {{ session('error') }}
             </div>
         @endif
 

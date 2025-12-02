@@ -7,20 +7,20 @@
     <div class="space-y-6">
 
         {{-- FORM SUPERIOR: filtros (GET) --}}
-        <form method="GET" action="{{ route('asistencias.armar-cursada') }}" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-4">
+        <form method="GET" action="{{ route('asistencias.armar-cursada') }}" class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6 space-y-4">
 
             {{-- Cátedra / Comisión / Profesor --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {{-- Cátedra --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label class="block text-sm font-medium text-white mb-1">
                         Cátedra
                     </label>
                     <select
                         name="subject_id"
-                        class="w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-blue-500 focus:ring-blue-500
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        class="w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
+                        focus:border-blue-500 focus:ring-blue-500
+                        dark:bg-white dark:text-gray-800 dark:border-gray-600">
                         <option value="">Seleccione cátedra...</option>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject->id }}"
@@ -33,14 +33,14 @@
 
                 {{-- Comisión --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label class="block text-sm font-medium text-white mb-1">
                         Comisión
                     </label>
                     <select
                         name="commission_nombre"
-                        class="w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-blue-500 focus:ring-blue-500
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        class="w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
+                        focus:border-blue-500 focus:ring-blue-500
+                        dark:bg-white dark:text-gray-800 dark:border-gray-600">
                         <option value="">Seleccione comisión...</option>
                         @foreach ($commissionOptions as $opt)
                             <option value="{{ $opt }}"
@@ -53,14 +53,14 @@
 
                 {{-- Profesor --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label class="block text-sm font-medium text-white mb-1">
                         Profesor
                     </label>
                     <select
                         name="professor_id"
-                        class="w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-blue-500 focus:ring-blue-500
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        class="w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
+                        focus:border-blue-500 focus:ring-blue-500
+                        dark:bg-white dark:text-gray-800 dark:border-gray-600">
                         <option value="">Sin profesor asignado</option>
                         @foreach ($professors as $prof)
                             <option value="{{ $prof->id }}"
@@ -74,7 +74,7 @@
 
             {{-- Filtro --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label class="block text-sm font-medium text-white mb-1">
                     Filtro (Legajo, Apellido, Nombre)
                 </label>
                 <input

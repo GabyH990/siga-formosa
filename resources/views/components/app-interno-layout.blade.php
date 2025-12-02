@@ -19,13 +19,24 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900" x-data="{ dirty: false }">
-    <!-- Top Bar -->
+<body class="font-sans antialiased text-white min-h-screen" x-data="{ dirty: false }">
+
+    <!-- =========== VIDEO DE FONDO =========== -->
+    <video autoplay muted loop playsinline
+        class="fixed top-0 left-0 w-full h-full object-cover -z-20">
+        <source src="{{ asset('image/fondo_animado.webm') }}" type="video/webm">
+        <!-- fallback -->
+    </video>
+
+    <!-- =========== LÁMINA SUAVE =========== -->
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-[1px] -z-10"></div>
+
+    <!-- =========== NAVBAR INTERNO SIGA (mantiene funcionalidad previa) =========== -->
     <header
-        class="bg-white dark:bg-gray-800 shadow fixed w-full top-0 z-50 h-16 flex items-center justify-between px-4">
-        <!-- Izquierda: Botón Atrás -->
-        <div class="flex-shrink-0 w-24">
-            {{-- AHORA: siempre usamos el historial del navegador. --}}
+        class="backdrop-blur-lg bg-black/30 fixed w-full top-0 z-50 h-16 flex items-center justify-between px-4 border-b border-white/10">
+
+        <!-- IZQUIERDA: Botón Atrás (manteniendo tu lógica de dirty) -->
+        <div class="flex-shrink-0 w-28">
             <button type="button"
                 @click="
                     if (dirty) {
@@ -36,50 +47,49 @@
                         window.history.back();
                     }
                 "
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1">
+                class="text-gray-200 hover:text-white flex items-center gap-1">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
-                Atrás
+                <span class="hidden sm:inline">Atrás</span>
             </button>
         </div>
 
-        <!-- Centro: Título -->
+        <!-- CENTRO: SIGA – UTN -->
         <div class="flex-grow text-center">
-            <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                {{ $header ?? 'SIGA-Formosa' }}
+            <h1 class="text-2xl font-semibold drop-shadow-md">
+                SIGA – UTN
             </h1>
         </div>
 
-        <!-- Derecha: Menú de Usuario -->
-        <div class="flex-shrink-0 w-24 flex justify-end">
+        <!-- DERECHA: Menú de Usuario (mantiene foto, nombre y dropdown) -->
+        <div class="flex-shrink-0 flex items-center gap-3">
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
-                    class="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition duration-150 ease-in-out">
-                    <div>{{ Auth::user()->name }}</div>
+                    class="flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-white transition px-2 py-1 rounded">
+                    <span class="hidden md:inline">{{ Auth::user()->name }}</span>
+
                     @if(Auth::user()->foto)
                         <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar"
-                            class="w-8 h-8 rounded-full object-cover">
+                             class="w-8 h-8 rounded-full object-cover border border-white/10">
                     @else
-                        <div
-                            class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                            {{ substr(Auth::user()->name, 0, 1) }}
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
                     @endif
                 </button>
 
                 <div x-show="open" @click.away="open = false"
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50"
+                    class="absolute right-0 mt-2 w-48 bg-white/95 text-gray-800 rounded-md shadow-lg py-1 z-50"
                     style="display: none;">
                     <a href="{{ url('/perfil') }}"
-                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        Perfil
-                    </a>
+                        class="block px-4 py-2 text-sm hover:bg-gray-100">Perfil</a>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                             Cerrar sesión
                         </button>
                     </form>
@@ -88,22 +98,21 @@
         </div>
     </header>
 
-    <!-- Contenido principal -->
+    <!-- =========== CONTENIDO PRINCIPAL =========== -->
     <main class="pt-20 pb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <!-- Mensajes flash -->
+        <!-- Mensajes flash (manteniendo lo que ya tenías) -->
         @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+            <div class="mb-4 bg-green-100/80 border border-green-400 text-green-900 px-4 py-3 rounded relative">
+                {{ session('success') }}
             </div>
         @endif
         @if(session('error'))
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-                role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
+            <div class="mb-4 bg-red-100/80 border border-red-400 text-red-900 px-4 py-3 rounded relative">
+                {{ session('error') }}
             </div>
         @endif
 
+        {{-- SLOT: aquí se renderiza el contenido de cada vista (panel, forms, etc.) --}}
         {{ $slot }}
     </main>
 

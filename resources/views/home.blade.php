@@ -94,7 +94,7 @@
         <h2 class="text-4xl font-bold drop-shadow-lg mb-6">Ingreso al Sistema</h2>
 
         <p class="max-w-2xl mx-auto text-lg opacity-90 drop-shadow mb-10">
-            Accede a tu cuenta o registrate para ingresar al sistema académico.
+            Accede a tu cuenta para ingresar al sistema académico.
         </p>
 
         <div class="flex justify-center gap-6">
