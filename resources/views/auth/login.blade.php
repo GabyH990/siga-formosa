@@ -63,14 +63,6 @@
             <!-- Footer: Olvidé mi contraseña + botón -->
             <div class="flex items-center justify-between mt-6">
 
-                @if (Route::has('password.request'))
-                    <a
-                        class="underline text-sm text-blue-300 hover:text-blue-400"
-                        href="{{ route('password.request') }}"
-                    >
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                @endif
 
                 <x-primary-button class="ms-3 bg-blue-600 hover:bg-blue-700">
                     {{ __('Ingresar') }}
