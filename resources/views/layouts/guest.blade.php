@@ -1,30 +1,85 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>{{ $title ?? 'SIGA - UTN' }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+
+<body class="antialiased text-white flex flex-col min-h-screen">
+
+    <!-- ============ VIDEO DE FONDO ============ -->
+    <video autoplay muted loop playsinline
+        class="fixed top-0 left-0 w-full h-full object-cover -z-20">
+        <source src="{{ asset('img/fondo_animado.webm') }}" type="video/mp4">
+    </video>
+
+    <!-- ============ LÁMINA SUAVE ============ -->
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-[1px] -z-10"></div>
+
+    <!-- ============ NAVBAR ============ -->
+    <header class="w-full backdrop-blur-lg bg-black/20 fixed top-0 left-0 z-50 border-b border-white/10">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <!-- LOGO -->
+            <div class="flex items-center space-x-2">
+                <img src="{{ asset('img/siga_logo.png') }}" alt="Logo SIGA" class="h-10">
+                <span class="font-semibold text-xl">SIGA – UTN</span>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+            <!-- LINKS -->
+            <ul class="hidden md:flex items-center space-x-6 font-medium">
+                <li><a href="/" class="hover:text-blue-300">Inicio</a></li>
+                <li><a href="/#contacto" class="hover:text-blue-300">Contacto</a></li>
+
+                @auth
+                    <li><a href="{{ route('dashboard') }}" class="text-blue-300 font-semibold">Panel</a></li>
+                @else
+                    <li><a href="{{ route('login') }}" class="hover:text-blue-300">Iniciar sesión</a></li>
+                @endauth
+            </ul>
+
+            <!-- MOBILE MENU -->
+            <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">☰</button>
+        </nav>
+
+        <div id="mobileMenu"
+             class="hidden md:hidden bg-black/40 backdrop-blur-xl px-6 py-4 space-y-3 text-white">
+            <a href="/" class="block">Inicio</a>
+            <a href="/#contacto" class="block">Contacto</a>
+
+            @auth
+                <a href="{{ route('dashboard') }}" class="block text-blue-300 font-semibold">Panel</a>
+            @else
+                <a href="{{ route('login') }}" class="block">Iniciar sesión</a>
+            @endauth
         </div>
-    </body>
+    </header>
+
+    <!-- ============ CONTENIDO LIVEWIRE ============ -->
+    <main class="pt-32 px-6 max-w-md mx-auto">
+        {{ $slot }}
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="mt-auto py-6 text-center bg-black/40 backdrop-blur-lg border-t border-white/10">
+        <p class="opacity-90">
+            SIGA UTN – Formosa © {{ date('Y') }} | Todos los derechos reservados
+        </p>
+    </footer>
+
+    @livewireScripts
+
+    <!-- Script menú -->
+    <script>
+        document.getElementById("mobileMenuBtn").onclick = () =>
+            document.getElementById("mobileMenu").classList.toggle("hidden");
+    </script>
+
+</body>
 </html>
