@@ -14,22 +14,21 @@ class ProfesorController extends Controller
     /**
      * Carrera activa (TUP / LPB).
      */
-private function getActiveCareerId(): ?int
-{
-    /** @var \App\Models\User|null $user */
-    $user = Auth::user();  // 👈
+    private function getActiveCareerId(): ?int
+    {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
 
-    if (session()->has('active_career_id')) {
-        return (int) session('active_career_id');
+        if (session()->has('active_career_id')) {
+            return (int) session('active_career_id');
+        }
+
+        if ($user && $user->career_id) {
+            return (int) $user->career_id;
+        }
+
+        return null;
     }
-
-    if ($user && $user->career_id) {
-        return (int) $user->career_id;
-    }
-
-    return null;
-}
-
 
     public function index()
     {
@@ -102,12 +101,20 @@ private function getActiveCareerId(): ?int
         ]);
 
         DB::transaction(function () use ($validated) {
+            // Datos básicos del profesor
             $professorData = collect($validated)->except('subjects')->toArray();
-
+            /** @var \App\Models\Professor $professor */
             $professor = Professor::create($professorData);
 
-            if (!empty($validated['subjects'])) {
-                $commissionIds = Commission::whereIn('subject_id', $validated['subjects'])
+            // Materias seleccionadas
+            $subjectIds = $validated['subjects'] ?? [];
+
+            if (!empty($subjectIds)) {
+                // 1) Guardar qué cátedras dicta (pivot professor_subject)
+                $professor->subjects()->sync($subjectIds);
+
+                // 2) (opcional) vincularlo a TODAS las comisiones de esas cátedras
+                $commissionIds = Commission::whereIn('subject_id', $subjectIds)
                     ->pluck('id')
                     ->toArray();
 
@@ -128,8 +135,10 @@ private function getActiveCareerId(): ?int
             $professors = Professor::where('nombre', 'like', "%{$search}%")
                 ->orWhere('apellido', 'like', "%{$search}%")
                 ->orWhere('legajo', 'like', "%{$search}%")
-                ->limit(10)->get();
+                ->limit(10)
+                ->get();
         }
+
         return view('profesores.buscar', compact('professors'));
     }
 
@@ -139,7 +148,7 @@ private function getActiveCareerId(): ?int
     public function edit($id)
     {
         $careerId  = $this->getActiveCareerId();
-        $professor = Professor::with('commissions')->findOrFail($id);
+        $professor = Professor::with('commissions', 'subjects')->findOrFail($id);
 
         // Solo materias de la carrera activa
         $subjects = Subject::with('career')
@@ -149,9 +158,9 @@ private function getActiveCareerId(): ?int
             ->orderBy('nombre')
             ->get();
 
-        // materias que YA tiene (si tiene cualquier comisión de esa materia)
-        $selectedSubjects = $professor->commissions
-            ->pluck('subject_id')
+        // materias que YA tiene (por pivot professor_subject)
+        $selectedSubjects = $professor->subjects
+            ->pluck('id')
             ->unique()
             ->toArray();
 
@@ -163,6 +172,7 @@ private function getActiveCareerId(): ?int
      */
     public function update(Request $request, $id)
     {
+        /** @var \App\Models\Professor $professor */
         $professor = Professor::findOrFail($id);
 
         $validated = $request->validate([
@@ -178,16 +188,26 @@ private function getActiveCareerId(): ?int
         ]);
 
         DB::transaction(function () use ($professor, $validated) {
+            // Datos del profesor
             $professorData = collect($validated)->except('subjects')->toArray();
             $professor->update($professorData);
 
-            if (!empty($validated['subjects'])) {
-                $commissionIds = Commission::whereIn('subject_id', $validated['subjects'])
+            // Materias seleccionadas
+            $subjectIds = $validated['subjects'] ?? [];
+
+            if (!empty($subjectIds)) {
+                // 1) Actualizar cátedras que dicta (professor_subject)
+                $professor->subjects()->sync($subjectIds);
+
+                // 2) Actualizar comisiones asociadas a esas cátedras (professor_commission)
+                $commissionIds = Commission::whereIn('subject_id', $subjectIds)
                     ->pluck('id')
                     ->toArray();
 
                 $professor->commissions()->sync($commissionIds);
             } else {
+                // Si no eligió materias, limpiamos ambas relaciones
+                $professor->subjects()->detach();
                 $professor->commissions()->detach();
             }
         });

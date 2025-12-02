@@ -10,6 +10,7 @@ use App\Http\Controllers\EstadoAcademicoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\SuperAdmin\BedelesController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,7 +43,18 @@ Route::middleware(['auth', 'verified', 'check.role:superadmin,bedel'])->group(fu
     */
     Route::prefix('asistencias')->name('asistencias.')->group(function () {
         Route::get('/', [AsistenciaController::class, 'index'])->name('index');
-        Route::get('/armar-cursada', [AsistenciaController::class, 'armarCursada'])->name('armar-cursada');
+
+        // Armar cursada (GET: pantalla)
+        Route::get('/armar-cursada', [AsistenciaController::class, 'armarCursada'])
+            ->name('armar-cursada');
+
+        // NUEVOS: acciones de armar cursada (sin Livewire)
+        Route::post('/armar-cursada/add', [AsistenciaController::class, 'armarCursadaAdd'])
+            ->name('armar-cursada.add');
+
+        Route::post('/armar-cursada/remove', [AsistenciaController::class, 'armarCursadaRemove'])
+            ->name('armar-cursada.remove');
+
         Route::get('/registros', [AsistenciaController::class, 'registros'])->name('registros');
         Route::get('/reportes', [AsistenciaController::class, 'reportes'])->name('reportes');
     });

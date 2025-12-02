@@ -9,18 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::create('professor_subject', function (Blueprint $table) {
-        $table->id();
+    public function up(): void
+    {
+        Schema::create('professor_subject', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('professor_id')->constrained()->onDelete('cascade');
-        $table->foreignId('subject_id')->constrained()->onDelete('cascade');
+            $table->foreignId('professor_id')
+                ->constrained('professors')
+                ->cascadeOnDelete();
 
-        $table->timestamps();
-    });
-}
+            $table->foreignId('subject_id')
+                ->constrained('subjects')
+                ->cascadeOnDelete();
 
+            $table->timestamps();
+
+            // Evita duplicar la misma combinación profe ↔ materia
+            $table->unique(['professor_id', 'subject_id']);
+        });
+    }
 
     /**
      * Reverse the migrations.
