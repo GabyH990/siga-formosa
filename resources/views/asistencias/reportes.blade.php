@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="space-y-6">
-
+        
         {{-- Botón volver --}}
         <div>
             <a href="{{ route('asistencias.index') }}"
@@ -14,6 +14,7 @@
         </div>
 
         {{-- Selección de cátedra --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <form method="GET" action="{{ route('asistencias.reportes') }}" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -46,6 +47,7 @@
                 </div>
             </form>
         </div>
+        </div>
 
         {{-- Listado de comisiones y fechas --}}
         @if ($subjectId)
@@ -54,6 +56,7 @@
                     No hay planillas de asistencia cargadas para esta cátedra.
                 </div>
             @else
+            <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-4">
                     <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                         Planillas por comisión y fecha
@@ -61,37 +64,26 @@
 
                     <div class="space-y-4">
                         @foreach ($commissionsGroups as $commissionId => $rows)
-                            @php
-                                $commissionName = $rows->first()->commission_nombre;
-                            @endphp
-
-                            <div class="border rounded-md p-4">
-                                <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                                    Comisión {{ $commissionName }}
-                                </h4>
-
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach ($rows as $row)
-                                        @php
-                                            $fecha = \Illuminate\Support\Carbon::parse($row->fecha);
-                                        @endphp
-                                        <a href="{{ route('asistencias.reportes.detalle', [
-                                                'commission_id' => $commissionId,
-                                                'fecha'         => $fecha->toDateString(),
-                                            ]) }}"
-                                           class="inline-flex items-center px-3 py-1 rounded-full text-xs
-                                                  bg-gray-100 hover:bg-gray-200 text-gray-800">
-                                            {{ $fecha->format('d/m/Y') }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
+                         @php
+                         $commissionName = $rows->first()->commission_nombre;
+                          @endphp
+                          <div class="border border-violet-300 rounded-md p-4 flex items-center justify-between">
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                Comisión {{ $commissionName }}
+                            </h4>
+                            <a href="{{ route('asistencias.reportes.detalle', ['commission_id' => $commissionId]) }}"
+                                class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mediumbg-blue-600 text-white hover:bg-blue-700">
+                                Ver detalle
+                            </a>
+                        </div>
                         @endforeach
+
                     </div>
                 </div>
+            </div>
             @endif
         @else
-            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+            <div class="bg-cyan-50 border border-cyan-200 text-cyan-800 px-4 py-3 rounded">
                 Seleccione una cátedra para ver las planillas disponibles.
             </div>
         @endif

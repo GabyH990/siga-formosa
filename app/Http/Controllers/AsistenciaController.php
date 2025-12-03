@@ -437,69 +437,70 @@ class AsistenciaController extends Controller
      * Detalle de una planilla (cátedra+comisión+fecha) para editar estados
      */
     public function reportesDetalle(Request $request)
-    {
-        $data = $request->validate([
-            'commission_id' => ['required', 'exists:commissions,id'],
-            'fecha'         => ['required', 'date'],
-        ]);
+{
+    $data = $request->validate([
+        'commission_id' => ['required', 'exists:commissions,id'],
+    ]);
 
-        $commissionId = (int) $data['commission_id'];
-        $fecha        = $data['fecha'];
+    $commissionId = (int) $data['commission_id'];
+    $commission   = Commission::with('subject', 'students')->findOrFail($commissionId);
 
-        $commission = Commission::with('subject')->findOrFail($commissionId);
+    // Traer todas las asistencias de esa comisión
+    $attendances = Attendance::where('commission_id', $commissionId)
+        ->with('student')
+        ->get();
 
-        // Traer asistencias + alumno
-        $attendances = Attendance::where('commission_id', $commissionId)
-            ->whereDate('fecha', $fecha)
-            ->with('student')
-            ->orderBy(Student::select('apellido')->whereColumn('students.id', 'attendances.student_id'))
-            ->get();
+    // Fechas distintas ordenadas
+    $fechas = $attendances->pluck('fecha')->unique()->sort();
 
-        return view('asistencias.reportes-detalle', [
-            'commission'  => $commission,
-            'fecha'       => $fecha,
-            'attendances' => $attendances,
-        ]);
-    }
+    return view('asistencias.reportes-detalle', [
+        'commission'  => $commission,
+        'fechas'      => $fechas,
+        'attendances' => $attendances,
+    ]);
+}
 
     /**
      * Guardar cambios de estados desde Reportes
      */
     public function reportesDetalleGuardar(Request $request)
-    {
-        $data = $request->validate([
-            'commission_id' => ['required', 'exists:commissions,id'],
-            'fecha'         => ['required', 'date'],
-            'estados'       => ['required', 'array'],
-            'estados.*'     => ['required', 'in:P,A,AJ'],
-        ]);
+{
+    $data = $request->validate([
+        'commission_id' => ['required', 'exists:commissions,id'],
+        'estados'       => ['required', 'array'],
+    ]);
 
-        $commissionId = (int) $data['commission_id'];
-        $fecha        = $data['fecha'];
-        $estados      = $data['estados'];
+    $commissionId = (int) $data['commission_id'];
+    $estados      = $data['estados'];
 
-        DB::transaction(function () use ($commissionId, $fecha, $estados) {
-            foreach ($estados as $studentId => $estado) {
-                Attendance::updateOrCreate(
-                    [
-                        'student_id'    => $studentId,
-                        'commission_id' => $commissionId,
-                        'fecha'         => $fecha,
-                    ],
-                    [
-                        'estado' => $estado,
-                    ]
-                );
+    DB::transaction(function () use ($commissionId, $estados) {
+        foreach ($estados as $studentId => $fechas) {
+            foreach ($fechas as $fecha => $estado) {
+                if ($estado && in_array($estado, ['P','A','AJ'])) {
+                    Attendance::updateOrCreate(
+                        [
+                            'student_id'    => $studentId,
+                            'commission_id' => $commissionId,
+                            'fecha'         => $fecha,
+                        ],
+                        [
+                            'estado' => $estado,
+                        ]
+                    );
+                }
             }
-        });
+        }
+    });
 
-        return redirect()
-            ->route('asistencias.reportes.detalle', [
-                'commission_id' => $commissionId,
-                'fecha'         => $fecha,
-            ])
-            ->with('success', 'Asistencia actualizada correctamente.');
-    }
+    return redirect()
+        ->route('asistencias.reportes.detalle', [
+            'commission_id' => $commissionId,
+        ])
+        ->with('success', 'Asistencias actualizadas correctamente.');
+}
+
+
+
 public function reportesPorcentajes(Request $request)
   {
     // subject_id y commission_id vienen desde Reportes
