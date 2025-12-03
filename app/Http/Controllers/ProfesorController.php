@@ -30,16 +30,31 @@ class ProfesorController extends Controller
         return null;
     }
 
+    /**
+     * Entrada al módulo Profesores:
+     * redirige directamente al listado (como pasa con Alumnos).
+     */
     public function index()
     {
-        return view('profesores.index');
+        return redirect()->route('profesores.listado');
     }
 
+    /**
+     * Listado principal (similar a alumnos.index)
+     */
     public function listado(Request $request)
     {
-        $careerId = $this->getActiveCareerId();
+        $careerId     = $this->getActiveCareerId();
+        $search       = $request->input('search');
+        $verInactivos = $request->boolean('ver_inactivos');
 
-        $query = Professor::with('commissions.subject');
+        // Traemos profesores con sus relaciones
+        $query = Professor::with(['commissions.subject', 'subjects.career']);
+
+        // Si NO marcó "ver inactivos", solo activos
+        if (! $verInactivos) {
+            $query->where('activo', true);
+        }
 
         // Solo profesores que tengan al menos una comisión
         // de una materia de la carrera activa
@@ -49,8 +64,8 @@ class ProfesorController extends Controller
             });
         }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
+        // Filtro de búsqueda
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('nombre', 'like', "%{$search}%")
                     ->orWhere('apellido', 'like', "%{$search}%")
@@ -59,9 +74,20 @@ class ProfesorController extends Controller
             });
         }
 
-        $professors = $query->orderBy('apellido')->paginate(15);
+        $professors = $query
+            ->orderBy('apellido')
+            ->orderBy('nombre')
+            ->paginate(15)
+            ->appends([
+                'search'       => $search,
+                'ver_inactivos'=> $verInactivos ? '1' : '0',
+            ]);
 
-        return view('profesores.listado', compact('professors'));
+        return view('profesores.listado', [
+            'professors'   => $professors,
+            'search'       => $search,
+            'verInactivos' => $verInactivos,
+        ]);
     }
 
     /**
@@ -102,7 +128,13 @@ class ProfesorController extends Controller
 
         DB::transaction(function () use ($validated) {
             // Datos básicos del profesor
-            $professorData = collect($validated)->except('subjects')->toArray();
+            $professorData = collect($validated)
+                ->except('subjects')
+                ->toArray();
+
+            // Siempre crear como ACTIVO
+            $professorData['activo'] = true;
+
             /** @var \App\Models\Professor $professor */
             $professor = Professor::create($professorData);
 
@@ -113,7 +145,7 @@ class ProfesorController extends Controller
                 // 1) Guardar qué cátedras dicta (pivot professor_subject)
                 $professor->subjects()->sync($subjectIds);
 
-                // 2) (opcional) vincularlo a TODAS las comisiones de esas cátedras
+                // 2) Vincularlo a TODAS las comisiones de esas cátedras
                 $commissionIds = Commission::whereIn('subject_id', $subjectIds)
                     ->pluck('id')
                     ->toArray();
@@ -188,8 +220,11 @@ class ProfesorController extends Controller
         ]);
 
         DB::transaction(function () use ($professor, $validated) {
-            // Datos del profesor
-            $professorData = collect($validated)->except('subjects')->toArray();
+            // Datos del profesor (no tocamos "activo" acá)
+            $professorData = collect($validated)
+                ->except('subjects')
+                ->toArray();
+
             $professor->update($professorData);
 
             // Materias seleccionadas
@@ -217,13 +252,38 @@ class ProfesorController extends Controller
             ->with('success', 'Profesor actualizado correctamente.');
     }
 
+    /**
+     * "Eliminar": marcar como INACTIVO (no se borra de la BD).
+     */
     public function destroy($id)
     {
+        /** @var \App\Models\Professor $professor */
         $professor = Professor::findOrFail($id);
-        $professor->delete();
+
+        $professor->update([
+            'activo' => false,
+        ]);
+
+        // No tocamos relaciones, para mantener historial
+        return redirect()
+            ->route('profesores.listado')
+            ->with('success', 'Profesor desactivado correctamente (se mantiene en el historial).');
+    }
+
+    /**
+     * Activar de nuevo un profesor inactivo.
+     */
+    public function activar($id)
+    {
+        /** @var \App\Models\Professor $professor */
+        $professor = Professor::findOrFail($id);
+
+        $professor->update([
+            'activo' => true,
+        ]);
 
         return redirect()
             ->route('profesores.listado')
-            ->with('success', 'Profesor eliminado correctamente.');
+            ->with('success', 'Profesor activado nuevamente.');
     }
 }

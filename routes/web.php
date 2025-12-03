@@ -89,25 +89,32 @@ Route::prefix('alumnos')->name('alumnos.')->group(function () {
     Route::get('/{id}/edit', [AlumnoController::class, 'edit'])->name('edit');
     Route::put('/{id}', [AlumnoController::class, 'update'])->name('update');
 
-    // 👇 NUEVO: eliminar alumno
+    // NUEVO: eliminar alumno
     Route::delete('/{id}', [AlumnoController::class, 'destroy'])->name('destroy');
 });
 
     /*
-    |--------------------------------------------------------------------------
-    | Módulo Profesores
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('profesores')->name('profesores.')->group(function () {
-        Route::get('/', [ProfesorController::class, 'index'])->name('index');
-        Route::get('/listado', [ProfesorController::class, 'listado'])->name('listado');
-        Route::get('/nuevo', [ProfesorController::class, 'create'])->name('create');
-        Route::post('/nuevo', [ProfesorController::class, 'store'])->name('store');
-        Route::get('/editar', [ProfesorController::class, 'buscar'])->name('buscar');
-        Route::get('/editar/{id}', [ProfesorController::class, 'edit'])->name('edit');
-        Route::put('/editar/{id}', [ProfesorController::class, 'update'])->name('update');
-        Route::delete('/{id}', [ProfesorController::class, 'destroy'])->name('destroy');
-    });
+|--------------------------------------------------------------------------
+| Módulo Profesores
+|--------------------------------------------------------------------------
+*/
+Route::prefix('profesores')->name('profesores.')->group(function () {
+    Route::get('/', [ProfesorController::class, 'index'])->name('index');
+    Route::get('/listado', [ProfesorController::class, 'listado'])->name('listado');
+
+    Route::get('/nuevo', [ProfesorController::class, 'create'])->name('create');
+    Route::post('/nuevo', [ProfesorController::class, 'store'])->name('store');
+
+    Route::get('/buscar', [ProfesorController::class, 'buscar'])->name('buscar');
+
+    Route::get('/editar/{id}', [ProfesorController::class, 'edit'])->name('edit');
+    Route::put('/editar/{id}', [ProfesorController::class, 'update'])->name('update');
+
+    // Activar / Desactivar
+    Route::patch('/{id}/activar', [ProfesorController::class, 'activar'])->name('activar');
+    Route::delete('/{id}', [ProfesorController::class, 'destroy'])->name('destroy');
+});
+
 
     /*
     |--------------------------------------------------------------------------

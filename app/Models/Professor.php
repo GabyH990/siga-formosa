@@ -19,16 +19,37 @@ class Professor extends Model
         'activo',
     ];
 
+    /**
+     * Casts
+     */
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
+
+    /**
+     * Relación: profesor ↔ comisiones
+     */
     public function commissions()
     {
         return $this->belongsToMany(Commission::class, 'professor_commission')
             ->withTimestamps();
     }
 
+    /**
+     * Relación: profesor ↔ cátedras (materias)
+     */
     public function subjects()
-{
-    return $this->belongsToMany(Subject::class, 'professor_subject')
-        ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Subject::class, 'professor_subject')
+            ->withTimestamps();
+    }
 
+    /**
+     * Scope opcional para traer solo activos
+     * (NO rompe nada si no lo usás en otros lados).
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
+    }
 }
