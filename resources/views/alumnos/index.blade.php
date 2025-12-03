@@ -3,10 +3,12 @@
         Listado de Alumnos
     </x-slot>
 
+<div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
     <div class="space-y-6">
         <!-- Actions & Filters -->
+        
         <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
+            class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <div class="w-full md:w-1/2">
                 <form method="GET" action="{{ route('alumnos.index') }}" class="flex gap-2">
                     <input type="text" name="search" value="{{ request('search') }}"
@@ -30,43 +32,44 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-white/20 dark:bg-gray-700">
+                    <thead class="bg-violet-50 dark:bg-gray-700">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 Legajo</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 Apellido y Nombre</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 DNI</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 Carrera</th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 Cohorte</th>
                             <th
-                                class="px-6 py-3 text-right text-xs font-medium text-white dark:text-gray-300 uppercase tracking-wider">
+                                class="px-6 py-3 text-right text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                 Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white/20 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($students as $student)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white dark:text-gray-400">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
                                     {{ $student->legajo }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white dark:text-white">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-black dark:text-white">
                                     {{ $student->apellido }}, {{ $student->nombre }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white dark:text-gray-400">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
                                     {{ $student->dni }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white dark:text-gray-400">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
                                     {{ $student->career->codigo ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white dark:text-gray-400">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
                                     {{ $student->cohorte }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('alumnos.estado', $student->id) }}"
@@ -91,6 +94,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <!-- Botón de cierre/cancelar -->
 <div class="flex justify-center mt-6">
