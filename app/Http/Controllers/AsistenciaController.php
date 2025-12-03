@@ -11,6 +11,7 @@ use App\Models\Commission;
 use App\Models\Professor;
 use App\Models\Student;
 use App\Models\AcademicState;
+use App\Models\Attendance;
 
 class AsistenciaController extends Controller
 {
@@ -94,10 +95,9 @@ class AsistenciaController extends Controller
                     }
                 }
 
-                // Carrera de la materia (para alumnos)
                 $careerIdMateria = $subject->career_id;
 
-                /* -------- Cursantes -------- */
+                // -------- Cursantes --------
                 $cursantesQuery = Student::where('career_id', $careerIdMateria)
                     ->whereHas('academicStates', function ($q) use ($subjectId, $commissionModel) {
                         $q->where('subject_id', $subjectId)
@@ -118,14 +118,14 @@ class AsistenciaController extends Controller
                     ->orderBy('nombre')
                     ->get();
 
-                /* -------- Elegibles -------- */
+                // -------- Elegibles --------
                 $elegiblesQuery = Student::where('career_id', $careerIdMateria)
                     // NO tener la materia en Cursando / Regular / Aprobada
                     ->whereDoesntHave('academicStates', function ($q) use ($subjectId) {
                         $q->where('subject_id', $subjectId)
                           ->whereIn('estado', ['Cursando', 'Regular', 'Aprobada']);
                     })
-                    // NO estar ya en alguna comisión de la misma cátedra
+                    // NO estar en ninguna comisión de esa materia
                     ->whereDoesntHave('commissions', function ($q) use ($subjectId) {
                         $q->where('subject_id', $subjectId);
                     });
@@ -159,27 +159,30 @@ class AsistenciaController extends Controller
     }
 
     /**
-     * POST: agregar elegibles como cursantes
+     * POST: guardar alta/baja de cursantes (botón general Guardar)
      */
-    public function armarCursadaAdd(Request $request)
+    public function armarCursadaGuardar(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'subject_id'        => ['required', 'exists:subjects,id'],
             'commission_nombre' => ['required', 'in:1.1,1.2,1.3,2.1,2.2,2.3'],
-            'students'          => ['required', 'array'],
-            'students.*'        => ['integer', 'exists:students,id'],
             'professor_id'      => ['nullable', 'exists:professors,id'],
+            'add_students'      => ['array'],
+            'add_students.*'    => ['integer', 'exists:students,id'],
+            'remove_students'   => ['array'],
+            'remove_students.*' => ['integer', 'exists:students,id'],
         ]);
 
-        $subjectId        = (int) $request->subject_id;
-        $commissionNombre = $request->commission_nombre;
-        $professorId      = $request->professor_id;
-        $studentIds       = $request->students;
+        $subjectId        = (int) $data['subject_id'];
+        $commissionNombre = $data['commission_nombre'];
+        $professorId      = $data['professor_id'] ?? null;
+        $addStudents      = $data['add_students'] ?? [];
+        $removeStudents   = $data['remove_students'] ?? [];
 
-        DB::transaction(function () use ($subjectId, $commissionNombre, $professorId, $studentIds) {
+        DB::transaction(function () use ($subjectId, $commissionNombre, $professorId, $addStudents, $removeStudents) {
             $periodo = str_starts_with($commissionNombre, '1.') ? '1C' : '2C';
 
-            // 1) Comisión destino (Cátedra + Comisión)
+            // Comisión destino (Cátedra + Comisión)
             $commission = Commission::firstOrCreate(
                 [
                     'subject_id' => $subjectId,
@@ -191,7 +194,7 @@ class AsistenciaController extends Controller
                 ]
             );
 
-            // 2) Enganchar profesor a la comisión (si viene)
+            // Enganchar profesor
             if ($professorId) {
                 $prof = Professor::find($professorId);
                 if ($prof) {
@@ -199,11 +202,20 @@ class AsistenciaController extends Controller
                 }
             }
 
-            // 3) Regla por alumno
-            foreach ($studentIds as $sid) {
+            // Quitar seleccionados de cursantes
+            if (!empty($removeStudents)) {
+                $commission->students()->detach($removeStudents);
 
-                // 3.a) TRASLADO EN COMMISSION_STUDENT:
-                //     sacar al alumno de otras comisiones de ESTA materia
+                AcademicState::whereIn('student_id', $removeStudents)
+                    ->where('subject_id', $subjectId)
+                    ->where('commission_id', $commission->id)
+                    ->where('estado', 'Cursando')
+                    ->delete();
+            }
+
+            // Agregar seleccionados desde elegibles
+            foreach ($addStudents as $sid) {
+                // Traslado desde otras comisiones de esa materia
                 $otrasComisionesIds = Commission::where('subject_id', $subjectId)
                     ->where('id', '!=', $commission->id)
                     ->pluck('id');
@@ -215,12 +227,12 @@ class AsistenciaController extends Controller
                         ->delete();
                 }
 
-                // 3.b) Agregarlo a la comisión destino (o mantenerlo si ya está)
+                // Agregar a comisión destino
                 $commission->students()->syncWithoutDetaching([
                     $sid => ['activo' => true],
                 ]);
 
-                // 3.c) ESTADO ACADÉMICO
+                // Estado académico
                 $estado = AcademicState::where('student_id', $sid)
                     ->where('subject_id', $subjectId)
                     ->first();
@@ -241,41 +253,7 @@ class AsistenciaController extends Controller
             }
         });
 
-        return back()->with('success', 'Alumnos agregados como cursantes (con traslado si correspondía).');
-    }
-
-    /**
-     * POST: quitar cursantes
-     */
-    public function armarCursadaRemove(Request $request)
-    {
-        $data = $request->validate([
-            'subject_id'          => 'required|exists:subjects,id',
-            'commission_nombre'   => 'required',
-            'selectedCursantes'   => 'required|array',
-            'selectedCursantes.*' => 'exists:students,id',
-        ]);
-
-        $subjectId        = $data['subject_id'];
-        $commissionNombre = $data['commission_nombre'];
-        $ids              = $data['selectedCursantes'];
-
-        $commission = Commission::where('subject_id', $subjectId)
-            ->where('nombre', $commissionNombre)
-            ->first();
-
-        if ($commission) {
-            $commission->students()->detach($ids);
-        }
-
-        return redirect()
-            ->route('asistencias.armar-cursada', [
-                'subject_id'        => $subjectId,
-                'commission_nombre' => $commissionNombre,
-                'professor_id'      => $request->input('professor_id'),
-                'filter'            => $request->input('filter'),
-            ])
-            ->with('success', 'Alumnos quitados de la cursada.');
+        return back()->with('success', 'Cursada guardada correctamente.');
     }
 
     /**
@@ -317,22 +295,345 @@ class AsistenciaController extends Controller
     }
 
     /* =========================================================
-     *  Registros / Reportes
+     *  REGISTROS (tomar asistencia)
+     * ========================================================= */
+
+    public function registros(Request $request)
+    {
+        $careerId = $this->getActiveCareerId();
+
+        // Cátedras de la carrera activa
+        $subjects = Subject::query()
+            ->when($careerId, fn ($q) => $q->where('career_id', $careerId))
+            ->orderBy('nombre')
+            ->get();
+
+        $subjectId    = $request->query('subject_id');
+        $commissionId = $request->query('commission_id');
+        $fecha        = $request->query('fecha');
+
+        $commissions = collect();
+        $students    = collect();
+        $attendances = collect();
+
+        if ($subjectId) {
+            $commissions = Commission::where('subject_id', $subjectId)
+                ->orderBy('nombre')
+                ->get();
+        }
+
+        if ($subjectId && $commissionId && $fecha) {
+            $commission = Commission::with(['students' => function ($q) {
+                $q->orderBy('apellido')
+                  ->orderBy('nombre');
+            }])->find($commissionId);
+
+            if ($commission) {
+                $students = $commission->students;
+
+                $attendances = Attendance::where('commission_id', $commissionId)
+                    ->whereDate('fecha', $fecha)
+                    ->get()
+                    ->keyBy('student_id');
+            }
+        }
+
+        return view('asistencias.registros', [
+            'subjects'     => $subjects,
+            'subjectId'    => $subjectId,
+            'commissions'  => $commissions,
+            'commissionId' => $commissionId,
+            'fecha'        => $fecha,
+            'students'     => $students,
+            'attendances'  => $attendances,
+        ]);
+    }
+
+    public function registrosGuardar(Request $request)
+    {
+        $data = $request->validate([
+            'subject_id'    => ['required', 'exists:subjects,id'],
+            'commission_id' => ['required', 'exists:commissions,id'],
+            'fecha'         => ['required', 'date'],
+            'estados'       => ['required', 'array'],
+            'estados.*'     => ['required', 'in:P,A,AJ'],
+        ]);
+
+        $subjectId    = (int) $data['subject_id'];
+        $commissionId = (int) $data['commission_id'];
+        $fecha        = $data['fecha'];
+        $estados      = $data['estados'];
+
+        DB::transaction(function () use ($commissionId, $fecha, $estados) {
+            foreach ($estados as $studentId => $estado) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id'    => $studentId,
+                        'commission_id' => $commissionId,
+                        'fecha'         => $fecha,
+                    ],
+                    [
+                        'estado' => $estado,
+                    ]
+                );
+            }
+        });
+
+        return redirect()
+            ->route('asistencias.registros', [
+                'subject_id'    => $subjectId,
+                'commission_id' => $commissionId,
+                'fecha'         => $fecha,
+            ])
+            ->with('success', 'Asistencia guardada correctamente.');
+    }
+
+    /* =========================================================
+     *  REPORTES
      * ========================================================= */
 
     /**
-     * Página "Registros" (Tomar asistencia)
+     * Vista principal de reportes:
+     * - Seleccionar cátedra
+     * - Mostrar comisiones y fechas con planillas de asistencia
      */
-    public function registros()
+    public function reportes(Request $request)
     {
-        return view('asistencias.registros');
+        $careerId = $this->getActiveCareerId();
+
+        // Cátedras de la carrera activa
+        $subjects = Subject::query()
+            ->when($careerId, fn ($q) => $q->where('career_id', $careerId))
+            ->orderBy('nombre')
+            ->get();
+
+        $subjectId = $request->query('subject_id');
+
+        $fechasPorComision = collect();
+        $commissions       = collect();
+
+        if ($subjectId) {
+            // Buscar todas las (comisión, fecha) que tienen asistencia para esa cátedra
+            $rows = Attendance::query()
+                ->join('commissions as c', 'c.id', '=', 'attendances.commission_id')
+                ->where('c.subject_id', $subjectId)
+                ->select('attendances.commission_id', 'c.nombre as commission_nombre', 'attendances.fecha')
+                ->groupBy('attendances.commission_id', 'c.nombre', 'attendances.fecha')
+                ->orderBy('c.nombre')
+                ->orderBy('attendances.fecha')
+                ->get();
+
+            $commissions = $rows->groupBy('commission_id');
+        }
+
+        return view('asistencias.reportes', [
+            'subjects'          => $subjects,
+            'subjectId'         => $subjectId,
+            'commissionsGroups' => $commissions, // colección agrupada por commission_id
+        ]);
     }
 
     /**
-     * Página "Reportes"
+     * Detalle de una planilla (cátedra+comisión+fecha) para editar estados
      */
-    public function reportes()
+    public function reportesDetalle(Request $request)
     {
-        return view('asistencias.reportes');
+        $data = $request->validate([
+            'commission_id' => ['required', 'exists:commissions,id'],
+            'fecha'         => ['required', 'date'],
+        ]);
+
+        $commissionId = (int) $data['commission_id'];
+        $fecha        = $data['fecha'];
+
+        $commission = Commission::with('subject')->findOrFail($commissionId);
+
+        // Traer asistencias + alumno
+        $attendances = Attendance::where('commission_id', $commissionId)
+            ->whereDate('fecha', $fecha)
+            ->with('student')
+            ->orderBy(Student::select('apellido')->whereColumn('students.id', 'attendances.student_id'))
+            ->get();
+
+        return view('asistencias.reportes-detalle', [
+            'commission'  => $commission,
+            'fecha'       => $fecha,
+            'attendances' => $attendances,
+        ]);
+    }
+
+    /**
+     * Guardar cambios de estados desde Reportes
+     */
+    public function reportesDetalleGuardar(Request $request)
+    {
+        $data = $request->validate([
+            'commission_id' => ['required', 'exists:commissions,id'],
+            'fecha'         => ['required', 'date'],
+            'estados'       => ['required', 'array'],
+            'estados.*'     => ['required', 'in:P,A,AJ'],
+        ]);
+
+        $commissionId = (int) $data['commission_id'];
+        $fecha        = $data['fecha'];
+        $estados      = $data['estados'];
+
+        DB::transaction(function () use ($commissionId, $fecha, $estados) {
+            foreach ($estados as $studentId => $estado) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id'    => $studentId,
+                        'commission_id' => $commissionId,
+                        'fecha'         => $fecha,
+                    ],
+                    [
+                        'estado' => $estado,
+                    ]
+                );
+            }
+        });
+
+        return redirect()
+            ->route('asistencias.reportes.detalle', [
+                'commission_id' => $commissionId,
+                'fecha'         => $fecha,
+            ])
+            ->with('success', 'Asistencia actualizada correctamente.');
+    }
+public function reportesPorcentajes(Request $request)
+  {
+    // subject_id y commission_id vienen desde Reportes
+    $data = $request->validate([
+        'subject_id'    => ['required', 'exists:subjects,id'],
+        'commission_id' => ['required', 'exists:commissions,id'],
+        'desde'         => ['nullable', 'date'],
+        'hasta'         => ['nullable', 'date'],
+    ]);
+
+    $subjectId    = (int) $data['subject_id'];
+    $commissionId = (int) $data['commission_id'];
+    $desde        = $data['desde'] ?? null;
+    $hasta        = $data['hasta'] ?? null;
+
+    $subject    = Subject::findOrFail($subjectId);
+    $commission = Commission::with('students')->findOrFail($commissionId);
+
+    // Traemos todas las asistencias de esa comisión (y rango de fechas opcional)
+    $attQuery = Attendance::where('commission_id', $commissionId);
+
+    if ($desde) {
+        $attQuery->whereDate('fecha', '>=', $desde);
+    }
+
+    if ($hasta) {
+        $attQuery->whereDate('fecha', '<=', $hasta);
+    }
+
+    $attendances = $attQuery->get();
+
+    // Cantidad de clases (fechas distintas)
+    $totalClases = $attendances->pluck('fecha')->unique()->count();
+
+    $resumen = [];
+
+    foreach ($commission->students as $student) {
+        $delAlumno = $attendances->where('student_id', $student->id);
+
+        // Clases asistidas = P o AJ
+        $asistidas = $delAlumno->whereIn('estado', ['P', 'AJ'])->count();
+
+        $porcentaje = $totalClases > 0
+            ? round(($asistidas / $totalClases) * 100, 2)
+            : 0;
+
+        // Incumplidor si P+AJ / total <= 75%
+        $incumple = $totalClases > 0 && $porcentaje <= 75;
+
+        $resumen[] = [
+            'student'     => $student,
+            'asistidas'   => $asistidas,
+            'totalClases' => $totalClases,
+            'porcentaje'  => $porcentaje,
+            'incumple'    => $incumple,
+        ];
+    }
+
+    $incumplidores = collect($resumen)
+        ->filter(fn ($r) => $r['incumple'])
+        ->values();
+
+    return view('asistencias.reportes-porcentajes', [
+        'subject'        => $subject,
+        'commission'     => $commission,
+        'subjectId'      => $subjectId,
+        'commissionId'   => $commissionId,
+        'desde'          => $desde,
+        'hasta'          => $hasta,
+        'totalClases'    => $totalClases,
+        'resumen'        => $resumen,
+        'incumplidores'  => $incumplidores,
+    ]);
+   }
+
+    /**
+     * Exportar planilla a Excel (CSV) respetando filtro de estado
+     */
+    public function reportesExportarExcel(Request $request)
+    {
+        $data = $request->validate([
+            'commission_id' => ['required', 'exists:commissions,id'],
+            'fecha'         => ['required', 'date'],
+            'estado'        => ['nullable', 'in:P,A,AJ'],
+        ]);
+
+        $commissionId = (int) $data['commission_id'];
+        $fecha        = $data['fecha'];
+        $estado       = $data['estado'] ?? null;
+
+        $commission = Commission::with('subject')->findOrFail($commissionId);
+
+        $query = Attendance::where('commission_id', $commissionId)
+            ->whereDate('fecha', $fecha)
+            ->with('student');
+
+        if ($estado) {
+            $query->where('estado', $estado);
+        }
+
+        $rows = $query->get();
+
+        $estadoSlug = $estado ? $estado : 'todos';
+        $fileName   = sprintf(
+            'asistencia_%s_%s_%s.csv',
+            $commission->nombre,
+            $fecha,
+            $estadoSlug
+        );
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ];
+
+        $callback = function () use ($rows) {
+            $handle = fopen('php://output', 'w');
+
+            // Encabezados
+            fputcsv($handle, ['Legajo', 'Apellido', 'Nombre', 'Estado']);
+
+            foreach ($rows as $att) {
+                $student = $att->student;
+                fputcsv($handle, [
+                    $student->legajo,
+                    $student->apellido,
+                    $student->nombre,
+                    $att->estado,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
