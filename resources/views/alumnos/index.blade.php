@@ -64,12 +64,33 @@
                                     {{ $student->career->codigo ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $student->cohorte }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+
+                                    {{-- Estado académico --}}
                                     <a href="{{ route('alumnos.estado', $student->id) }}"
-                                        class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Estado
-                                        Académico</a>
+                                        class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                        Estado Académico
+                                    </a>
+
+                                    {{-- Editar --}}
                                     <a href="{{ route('alumnos.edit', $student->id) }}"
-                                        class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">Editar</a>
+                                        class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        Editar
+                                    </a>
+
+                                    {{-- Eliminar --}}
+                                    <form action="{{ route('alumnos.destroy', $student->id) }}"
+                                          method="POST"
+                                          class="inline-block"
+                                          onsubmit="return confirm('¿Seguro que deseas eliminar este alumno? Se borrarán también sus estados académicos, asistencias y relaciones con comisiones.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 ml-2">
+                                            Eliminar
+                                        </button>
+                                    </form>
+
                                 </td>
                             </tr>
                         @empty
