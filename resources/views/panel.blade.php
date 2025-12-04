@@ -1,21 +1,20 @@
 {{-- resources/views/panel.blade.php --}}
 <x-app-interno-layout>
 
+    <x-slot name="header">
+        Panel Principal
+    </x-slot>
+
     {{-- CONTENIDO DEL PANEL --}}
     <div class="space-y-6 relative z-10">
-
-        <x-slot name="header">
-            Panel Principal
-        </x-slot>
 
         @if($esSuperAdmin ?? false)
             {{-- ======================================
                  VISTA SUPER ADMIN
-                ====================================== --}}
+               ====================================== --}}
 
             @if(!$activeCareer)
                 {{-- Super Admin SIN carrera seleccionada --}}
-
                 <div class="space-y-4">
 
                     {{-- Gestión de usuarios --}}
@@ -24,6 +23,15 @@
                         <h2 class="text-xl font-semibold text-black">Gestión de usuarios</h2>
                         <p class="mt-2 text-sm text-black">
                             Crear y administrar usuarios Bedel y sus carreras asignadas.
+                        </p>
+                    </a>
+
+                    {{-- Auditoría del sistema --}}
+                    <a href="{{ route('superadmin.audit.index') }}"
+                       class="block bg-white backdrop-blur-md border border-red-400 shadow rounded-lg p-6 hover:bg-red-100 transition">
+                        <h2 class="text-xl font-semibold text-black">Auditoría</h2>
+                        <p class="mt-2 text-sm text-black">
+                            Ver acciones registradas en el sistema (altas, ediciones, desactivaciones, etc.).
                         </p>
                     </a>
 
@@ -46,7 +54,6 @@
                     </a>
 
                 </div>
-        
 
             @else
                 {{-- Super Admin CON carrera seleccionada (vista tipo Bedel) --}}
@@ -101,13 +108,22 @@
                         </p>
                     </a>
 
+                    {{-- Auditoría (también accesible desde aquí) --}}
+                    <a href="{{ route('superadmin.audit.index') }}"
+                       class="block bg-white backdrop-blur-md border border-red-400 shadow rounded-lg p-6 hover:bg-red-100 transition">
+                        <h2 class="text-xl font-semibold text-black">Auditoría</h2>
+                        <p class="mt-2 text-sm text-black">
+                            Ver el historial de acciones realizadas en el sistema.
+                        </p>
+                    </a>
+
                 </div>
             @endif
 
         @else
             {{-- ======================================
                  VISTA BEDEL (usuario común)
-                ====================================== --}}
+               ====================================== --}}
 
             <div class="space-y-4">
 

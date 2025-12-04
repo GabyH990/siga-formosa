@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\EstadoAcademicoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\SuperAdmin\BedelesController;
+use App\Http\Controllers\SuperAdmin\AuditLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -144,9 +145,15 @@ Route::prefix('profesores')->name('profesores.')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('super-admin')
-        ->middleware('check.role:superadmin')
-        ->name('superadmin.')
-        ->group(function () {
-            Route::resource('bedeles', BedelesController::class);
-        });
+    ->middleware('check.role:superadmin')
+    ->name('superadmin.')
+    ->group(function () {
+        // Gestión de bedeles
+        Route::resource('bedeles', BedelesController::class);
+
+        // 👉 Módulo Auditoría (solo Super Admin)
+        Route::get('auditoria', [AuditLogController::class, 'index'])
+            ->name('audit.index');
+    });
+
 });
