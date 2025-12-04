@@ -21,6 +21,7 @@
         @endif
 
         {{-- Formulario de selección de cátedra / comisión / fecha --}}
+        <div class="p-[1px] border-t-4 border-violet-200 rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <form method="GET" action="{{ route('asistencias.registros') }}" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -86,7 +87,7 @@
                 </div>
             </form>
         </div>
-
+        </div>
         {{-- Planilla de asistencia --}}
         @if ($subjectId && $commissionId && $fecha)
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-4">

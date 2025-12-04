@@ -4,89 +4,89 @@
     </x-slot>
 
     <div class="flex justify-center">
-        <div class="w-full max-w-xl bg-sky-50 dark:bg-gray-800 shadow-md rounded-xl p-8">
+        <div class="w-full max-w-xl bg-white/20 dark:bg-gray-800 shadow-md rounded-xl p-8">
 
             <form method="POST" action="{{ route('profesores.store') }}" x-on:change="dirty = true">
                 @csrf
 
                 {{-- Legajo --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Legajo
                     </label>
                     <input type="text" name="legajo" value="{{ old('legajo') }}" required
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                     @error('legajo') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Nombre --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Nombre
                     </label>
                     <input type="text" name="nombre" value="{{ old('nombre') }}" required
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                     @error('nombre') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Apellido --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Apellido
                     </label>
                     <input type="text" name="apellido" value="{{ old('apellido') }}" required
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                     @error('apellido') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Correo --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Correo
                     </label>
                     <input type="email" name="correo" value="{{ old('correo') }}"
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                     @error('correo') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Teléfono --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Teléfono
                     </label>
                     <input type="text" name="telefono" value="{{ old('telefono') }}"
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                 </div>
 
                 {{-- Título (opcional) --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300">
                         Título
                     </label>
                     <input type="text" name="titulo" value="{{ old('titulo') }}"
                         class="mt-1 block w-full rounded-full border border-sky-200 px-4 py-2
                                shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                               dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
                 </div>
 
                 {{-- Cátedras (varias) --}}
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300 mb-2">
                         Cátedras
                     </label>
 
                     <div class="max-h-64 overflow-y-auto border rounded-lg p-3
-                                bg-white/60 dark:bg-gray-800 dark:border-gray-600">
+                                bg-white/30 dark:bg-gray-800 dark:border-gray-600">
                         @foreach($subjects as $subject)
                             <label class="flex items-center py-1">
                                 <input type="checkbox" name="subjects[]"
@@ -105,14 +105,18 @@
                     @error('subjects') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Botón Guardar --}}
-                <div class="mt-6 flex justify-center">
+                <div class="flex justify-end gap-4 mt-6">
                     <button type="submit"
-                        class="px-10 py-2 rounded-full text-sm font-semibold text-white
-                               bg-sky-500 hover:bg-sky-600">
-                        Guardar
-                    </button>
-                </div>
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                    Guardar
+                </button>
+                
+                <a href="{{ route('profesores.index') }}"
+                class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+                Cancelar
+            </a>
+        </div>
+
             </form>
         </div>
     </div>

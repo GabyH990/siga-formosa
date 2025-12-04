@@ -5,11 +5,11 @@
 
     <div class="space-y-6" x-data="{ estado: 'Regular', tipoAprobacion: '' }">
         {{-- Datos del alumno --}}
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-white dark:text-white mb-1">
                 {{ $student->apellido }}, {{ $student->nombre }}
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-300">
+            <p class="text-sm text-white dark:text-white">
                 Legajo:
                 <span class="font-semibold">{{ $student->legajo }}</span>
                 @if($student->career)
@@ -26,8 +26,8 @@
         </div>
 
         {{-- Formulario de carga / edición --}}
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-white dark:text-white mb-4">
                 Cargar / editar estado de una materia
             </h3>
 
@@ -36,11 +36,11 @@
 
                 {{-- Materia --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-white">
                         Materia
                     </label>
                     <select name="subject_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                    focus:border-blue-500 focus:ring-blue-500
                                    dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         <option value="">Seleccione materia</option>
@@ -55,11 +55,11 @@
 
                 {{-- Comisión (usa nombres fijos: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3) --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-white">
                         Comisión (opcional)
                     </label>
                     <select name="commission_nombre"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                    focus:border-blue-500 focus:ring-blue-500
                                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <option value="">Sin comisión específica</option>
@@ -74,12 +74,12 @@
 
                 {{-- Estado --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-white">
                         Estado
                     </label>
                     <select name="estado"
                             x-model="estado"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                    focus:border-blue-500 focus:ring-blue-500
                                    dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         <option value="Cursando">Cursando</option>
@@ -93,11 +93,11 @@
 
                 {{-- Año de regularización (solo cuando es Regular) --}}
                 <div x-show="estado === 'Regular'" x-cloak>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-white">
                         Año de regularización
                     </label>
                     <input type="number" name="anio_regularizacion"
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                   focus:border-blue-500 focus:ring-blue-500
                                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     @error('anio_regularizacion')
@@ -106,19 +106,19 @@
                 </div>
 
                 {{-- Datos de aprobación (solo cuando es Aprobada) --}}
-                <div x-show="estado === 'Aprobada'" x-cloak class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <div x-show="estado === 'Aprobada'" x-cloak class="border-t border-white dark:border-white pt-4">
                     <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">
                         Datos de aprobación
                     </h4>
 
                     {{-- Tipo de aprobación --}}
                     <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-medium text-white dark:text-white">
                             Tipo de aprobación
                         </label>
                         <select name="tipo_aprobacion"
                                 x-model="tipoAprobacion"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                        focus:border-blue-500 focus:ring-blue-500
                                        dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="">Seleccione...</option>
@@ -133,38 +133,38 @@
                     {{-- Libro / Acta / Tomo / Nota (solo si hay tipo aprobación) --}}
                     <div x-show="tipoAprobacion !== ''" x-cloak class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label class="block text-sm font-medium text-white dark:text-white">
                                 Libro
                             </label>
                             <input type="text" name="libro"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                           focus:border-blue-500 focus:ring-blue-500
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label class="block text-sm font-medium text-white dark:text-white">
                                 Acta
                             </label>
                             <input type="text" name="acta"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                           focus:border-blue-500 focus:ring-blue-500
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label class="block text-sm font-medium text-white dark:text-white">
                                 Tomo
                             </label>
                             <input type="text" name="tomo"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                           focus:border-blue-500 focus:ring-blue-500
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label class="block text-sm font-medium text-white dark:text-white">
                                 Nota final
                             </label>
                             <input type="number" step="0.01" name="nota_final"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                           focus:border-blue-500 focus:ring-blue-500
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
@@ -173,11 +173,11 @@
 
                 {{-- Observaciones --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-medium text-white dark:text-white">
                         Observaciones (opcional)
                     </label>
                     <textarea name="observaciones" rows="3"
-                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white text-gray-700
                                      focus:border-blue-500 focus:ring-blue-500
                                      dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
                     @error('observaciones')
@@ -203,28 +203,28 @@
         </div>
 
         {{-- Resumen de estados ya cargados --}}
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-white dark:text-white mb-4">
                 Estados cargados para este alumno
             </h3>
 
             @if($estados->isEmpty())
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-white dark:text-white">
                     Aún no se cargaron estados académicos para este alumno.
                 </p>
             @else
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs md:text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
+                        <thead class="bg-white/20 dark:bg-white/20">
                             <tr>
-                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Materia</th>
-                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Comisión</th>
-                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Estado</th>
-                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Tipo aprobación</th>
-                                <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Nota</th>
+                                <th class="px-4 py-2 text-left text-white dark:text-white">Materia</th>
+                                <th class="px-4 py-2 text-left text-white dark:text-white">Comisión</th>
+                                <th class="px-4 py-2 text-left text-white dark:text-white">Estado</th>
+                                <th class="px-4 py-2 text-left text-white dark:text-white">Tipo aprobación</th>
+                                <th class="px-4 py-2 text-left text-white dark:text-white">Nota</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-white/20 dark:bg-white/20 divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach($estados as $estado)
                                 <tr>
                                     <td class="px-4 py-2">

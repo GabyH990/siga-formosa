@@ -13,6 +13,7 @@
         @endif
 
         {{-- Barra superior: búsqueda + "Nuevo Profesor" --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <div class="w-full md:w-2/3">
                 <form method="GET"
@@ -62,11 +63,13 @@
                 </a>
             </div>
         </div>
+        </div>
 
         {{-- Tabla de profesores (similar a alumnos) --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table class="min-w-full divide-y divide-blue-300 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -95,7 +98,7 @@
                         </th>
                     </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-blue-300 dark:divide-gray-700">
                     @forelse($professors as $professor)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -192,5 +195,13 @@
                 {{ $professors->links() }}
             </div>
         </div>
+        </div>
     </div>
+    <!-- Botón de cierre/cancelar -->
+<div class="flex justify-center mt-6">
+    <a href="{{ route('panel') }}"
+       class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+        Volver al Panel
+    </a>
+</div>
 </x-app-interno-layout>

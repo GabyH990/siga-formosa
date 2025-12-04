@@ -27,6 +27,7 @@
         </div>
 
         {{-- Datos generales --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
             <p><strong>Cátedra:</strong> {{ $subject->nombre }}</p>
             <p><strong>Comisión:</strong> {{ $commission->nombre }}</p>
@@ -42,8 +43,10 @@
             </p>
             <p><strong>Total de clases (fechas distintas):</strong> {{ $totalClases }}</p>
         </div>
+        </div>
 
         {{-- Tabla general de porcentajes --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Porcentaje de asistencia por alumno
@@ -120,9 +123,11 @@
                 </div>
             @endif
         </div>
+        </div>
 
         {{-- Planilla de incumplidores --}}
         @if ($totalClases > 0)
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">
@@ -194,6 +199,7 @@
                     </div>
                 @endif
             </div>
+        </div>
         @endif
 
     </div>

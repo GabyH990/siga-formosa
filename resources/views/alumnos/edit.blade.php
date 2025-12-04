@@ -3,7 +3,7 @@
     <x-slot name="header">
         Editar Alumno: {{ $student->apellido }}, {{ $student->nombre }}
     </x-slot>
-
+<div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
     <div class="space-y-6">
         {{-- Datos actuales del alumno --}}
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -219,4 +219,5 @@
             </form>
         </div>
     </div>
+</div>
 </x-app-interno-layout>

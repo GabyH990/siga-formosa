@@ -436,7 +436,7 @@ class AsistenciaController extends Controller
     /**
      * Detalle de una planilla (cátedra+comisión+fecha) para editar estados
      */
-    public function reportesDetalle(Request $request)
+   public function reportesDetalle(Request $request)
 {
     $data = $request->validate([
         'commission_id' => ['required', 'exists:commissions,id'],
@@ -499,8 +499,7 @@ class AsistenciaController extends Controller
         ->with('success', 'Asistencias actualizadas correctamente.');
 }
 
-
-
+    
 public function reportesPorcentajes(Request $request)
   {
     // subject_id y commission_id vienen desde Reportes
