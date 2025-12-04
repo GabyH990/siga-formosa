@@ -75,7 +75,6 @@
 
                                     {{-- Estado académico --}}
                                     <a href="{{ route('alumnos.estado', $student->id) }}"
-<<<<<<< HEAD
                                         class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                         Estado Académico
                                     </a>
@@ -99,12 +98,6 @@
                                         </button>
                                     </form>
 
-=======
-                                        class="text-blue-400 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Estado
-                                        Académico</a>
-                                    <a href="{{ route('alumnos.edit', $student->id) }}"
-                                        class="text-blue-400 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">Editar</a>
->>>>>>> develop
                                 </td>
                             </tr>
                         @empty
@@ -122,18 +115,14 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-</x-app-interno-layout>
-=======
 </div>
 
     <!-- Botón de cierre/cancelar -->
 <div class="flex justify-center mt-6">
     <a href="{{ route('panel') }}"
        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
-        Cerrar
+        Volver al Panel
     </a>
 </div>
 
 </x-app-interno-layout>
->>>>>>> develop

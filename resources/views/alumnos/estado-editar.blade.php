@@ -5,11 +5,12 @@
 
     <div class="space-y-6" x-data="{ estado: 'Regular', tipoAprobacion: '' }">
         {{-- Datos del alumno --}}
-        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-white dark:text-white mb-1">
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-black dark:text-white mb-1">
                 {{ $student->apellido }}, {{ $student->nombre }}
             </h2>
-            <p class="text-sm text-white dark:text-white">
+            <p class="text-sm text-black dark:text-white">
                 Legajo:
                 <span class="font-semibold">{{ $student->legajo }}</span>
                 @if($student->career)
@@ -24,10 +25,12 @@
                 @endif
             </p>
         </div>
+        </div>
 
         {{-- Formulario de carga / edición --}}
-        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-white dark:text-white mb-4">
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blacblack dark:text-white mb-4">
                 Cargar / editar estado de una materia
             </h3>
 
@@ -36,7 +39,7 @@
 
                 {{-- Materia --}}
                 <div>
-                    <label class="block text-sm font-medium text-white dark:text-white">
+                    <label class="block text-sm font-medium text-black dark:text-white">
                         Materia
                     </label>
                     <select name="subject_id"
@@ -55,7 +58,7 @@
 
                 {{-- Comisión (usa nombres fijos: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3) --}}
                 <div>
-                    <label class="block text-sm font-medium text-white dark:text-white">
+                    <label class="block text-sm font-medium text-black dark:text-white">
                         Comisión (opcional)
                     </label>
                     <select name="commission_nombre"
@@ -74,7 +77,7 @@
 
                 {{-- Estado --}}
                 <div>
-                    <label class="block text-sm font-medium text-white dark:text-white">
+                    <label class="block text-sm font-medium text-black dark:text-white">
                         Estado
                     </label>
                     <select name="estado"
@@ -93,7 +96,7 @@
 
                 {{-- Año de regularización (solo cuando es Regular) --}}
                 <div x-show="estado === 'Regular'" x-cloak>
-                    <label class="block text-sm font-medium text-white dark:text-white">
+                    <label class="block text-sm font-medium text-black dark:text-white">
                         Año de regularización
                     </label>
                     <input type="number" name="anio_regularizacion"
@@ -113,7 +116,7 @@
 
                     {{-- Tipo de aprobación --}}
                     <div class="mb-3">
-                        <label class="block text-sm font-medium text-white dark:text-white">
+                        <label class="block text-sm font-medium text-black dark:text-white">
                             Tipo de aprobación
                         </label>
                         <select name="tipo_aprobacion"
@@ -133,7 +136,7 @@
                     {{-- Libro / Acta / Tomo / Nota (solo si hay tipo aprobación) --}}
                     <div x-show="tipoAprobacion !== ''" x-cloak class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-white dark:text-white">
+                            <label class="block text-sm font-medium text-black dark:text-white">
                                 Libro
                             </label>
                             <input type="text" name="libro"
@@ -142,7 +145,7 @@
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-white dark:text-white">
+                            <label class="block text-sm font-medium text-black dark:text-white">
                                 Acta
                             </label>
                             <input type="text" name="acta"
@@ -151,7 +154,7 @@
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-white dark:text-white">
+                            <label class="block text-sm font-medium text-black dark:text-white">
                                 Tomo
                             </label>
                             <input type="text" name="tomo"
@@ -160,7 +163,7 @@
                                           dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-white dark:text-white">
+                            <label class="block text-sm font-medium text-black dark:text-white">
                                 Nota final
                             </label>
                             <input type="number" step="0.01" name="nota_final"
@@ -173,7 +176,7 @@
 
                 {{-- Observaciones --}}
                 <div>
-                    <label class="block text-sm font-medium text-white dark:text-white">
+                    <label class="block text-sm font-medium text-black dark:text-white">
                         Observaciones (opcional)
                     </label>
                     <textarea name="observaciones" rows="3"
@@ -201,15 +204,17 @@
                 </div>
             </form>
         </div>
+        </div>
 
         {{-- Resumen de estados ya cargados --}}
-        <div class="bg-white/20 dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-white dark:text-white mb-4">
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-black dark:text-white mb-4">
                 Estados cargados para este alumno
             </h3>
 
             @if($estados->isEmpty())
-                <p class="text-sm text-white dark:text-white">
+                <p class="text-sm text-black dark:text-white">
                     Aún no se cargaron estados académicos para este alumno.
                 </p>
             @else
@@ -217,14 +222,14 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs md:text-sm">
                         <thead class="bg-white/20 dark:bg-white/20">
                             <tr>
-                                <th class="px-4 py-2 text-left text-white dark:text-white">Materia</th>
-                                <th class="px-4 py-2 text-left text-white dark:text-white">Comisión</th>
-                                <th class="px-4 py-2 text-left text-white dark:text-white">Estado</th>
-                                <th class="px-4 py-2 text-left text-white dark:text-white">Tipo aprobación</th>
-                                <th class="px-4 py-2 text-left text-white dark:text-white">Nota</th>
+                                <th class="px-4 py-2 text-left text-black dark:text-white">Materia</th>
+                                <th class="px-4 py-2 text-left text-black dark:text-white">Comisión</th>
+                                <th class="px-4 py-2 text-left text-black dark:text-white">Estado</th>
+                                <th class="px-4 py-2 text-left text-black dark:text-white">Tipo aprobación</th>
+                                <th class="px-4 py-2 text-left text-black dark:text-white">Nota</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white/20 dark:bg-white/20 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-white dark:bg-white/20 divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach($estados as $estado)
                                 <tr>
                                     <td class="px-4 py-2">
@@ -254,6 +259,7 @@
                     </table>
                 </div>
             @endif
+        </div>
         </div>
     </div>
 </x-app-interno-layout>

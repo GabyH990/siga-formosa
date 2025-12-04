@@ -72,7 +72,7 @@
                                 Comisión {{ $commissionName }}
                             </h4>
                             <a href="{{ route('asistencias.reportes.detalle', ['commission_id' => $commissionId]) }}"
-                                class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mediumbg-blue-600 text-white hover:bg-blue-700">
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 rounded-md text-sm font-mediumbg-blue-600 text-white hover:bg-blue-700">
                                 Ver detalle
                             </a>
                         </div>

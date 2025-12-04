@@ -89,7 +89,7 @@
 
 
     <!-- ================= SECCIÓN INGRESO ================= -->
-  <section id="ingreso" class="py-24">
+  <section id="ingreso" class="py-0.5">
     <div class="max-w-5xl mx-auto px-6 text-center">
         <h2 class="text-4xl font-bold drop-shadow-lg mb-6">Ingreso al Sistema</h2>
 

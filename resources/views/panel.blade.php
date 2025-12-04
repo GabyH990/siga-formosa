@@ -112,16 +112,16 @@
 
                 {{-- Asistencia --}}
                 <a href="{{ route('asistencias.index') }}"
-                   class="block bg-white backdrop-blur-md border border-blue-400 shadow rounded-lg p-6 hover:bg-blue-1indigo-40000 transition">
-                    <h2 class="text-xl font-semibold text-white">Asistencia</h2>
-                    <p class="mt-2 text-sm text-gray-100">
+                   class="block bg-white backdrop-blur-md border border-blue-400 shadow rounded-lg p-6 hover:bg-blue-100 transition">
+                    <h2 class="text-xl font-semibold text-black">Asistencia</h2>
+                    <p class="mt-2 text-sm text-black">
                         Gestionar cursadas, registros y reportes.
                     </p>
                 </a>
 
                 {{-- Alumnos --}}
                 <a href="{{ route('alumnos.index') }}"
-                   class="block bg-whiteblue-400 backdrop-blur-md border border-indigo-400 shadow rounded-lg p-6 hover:bg-indigo-100 transition">
+                   class="block bg-white backdrop-blur-md border border-indigo-400 shadow rounded-lg p-6 hover:bg-indigo-100 transition">
                     <h2 class="text-xl font-semibold text-black">Alumnos</h2>
                     <p class="mt-2 text-sm text-black">
                         Administrar legajos y datos personales.
@@ -130,7 +130,7 @@
 
                 {{-- Profesores --}}
                 <a href="{{ route('profesores.index') }}"
-                   class="block bg-white backdrop-blur-md border border-violet-400 shadow rounded-lg p-6 hover:bg-violet-1purple-40000 transition">
+                   class="block bg-white backdrop-blur-md border border-violet-400 shadow rounded-lg p-6 hover:bg-violet-100 transition">
                     <h2 class="text-xl font-semibold black">Profesores</h2>
                     <p class="mt-2 text-sm text-black">
                         Gestión de docentes y asignaciones.

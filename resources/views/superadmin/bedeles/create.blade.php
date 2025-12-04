@@ -2,7 +2,8 @@
     <x-slot name="header">
         Nuevo Bedel
     </x-slot>
-
+    <div class="max-w-4xl mx-auto">
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
     <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <form method="POST" action="{{ route('superadmin.bedeles.store') }}" x-on:change="dirty = true">
             @csrf
@@ -66,4 +67,7 @@
             </div>
         </form>
     </div>
+</div>
+</div>
+
 </x-app-interno-layout>

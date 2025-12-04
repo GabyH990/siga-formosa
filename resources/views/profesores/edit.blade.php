@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="flex justify-center">
-        <div class="w-full max-w-xl bg-sky-50 dark:bg-gray-800 shadow-md rounded-xl p-8">
+        <div class="w-full max-w-xl bg-violet-50 dark:bg-gray-800 shadow-md rounded-xl p-8">
 
             <form method="POST" action="{{ route('profesores.update', $professor->id) }}" x-on:change="dirty = true">
                 @csrf

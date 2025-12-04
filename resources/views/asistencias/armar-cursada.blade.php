@@ -20,6 +20,7 @@
         </div>
 
         {{-- Filtros principales (GET) --}}
+        <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <form method="GET" action="{{ route('asistencias.armar-cursada') }}" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -97,10 +98,11 @@
                 </div>
             </form>
         </div>
+        </div>
 
         {{-- Aviso si falta selección --}}
         @if (!$subjectId || !$commissionNombre)
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-yellow-800">
+            <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 text-sm text-cyan-800">
                 Seleccione una cátedra y una comisión para comenzar a armar la cursada.
             </div>
         @endif
@@ -116,6 +118,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {{-- ==== ELEGIBLES ==== --}}
+                    <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex flex-col">
                         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">
                             Elegibles
@@ -160,8 +163,10 @@
                             </div>
                         @endif
                     </div>
+                    </div>
 
                     {{-- ==== CURSANTES ==== --}}
+                    <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex flex-col">
                         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">
                             Cursantes
@@ -205,6 +210,7 @@
                                 </table>
                             </div>
                         @endif
+                    </div>
                     </div>
                 </div>
 
