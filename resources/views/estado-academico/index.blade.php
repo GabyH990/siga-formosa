@@ -30,13 +30,13 @@
                         Buscar
                     </button>
 
-                    {{-- Botón Exportar (solo interfaz por ahora) --}}
-                    <button type="button"
-                            class="inline-flex items-center px-4 py-2 border border-green-500 text-sm font-semibold
-                                   rounded-md text-green-700 bg-teal-300 hover:bg-blue-50
-                                   dark:border-blue-400 dark:text-white dark:bg-gray-800 dark:hover:bg-teal-700">
+                    {{-- Botón Exportar --}}
+                    <a href="{{ route('estado-academico.exportar', request()->query()) }}"
+                       class="inline-flex items-center px-4 py-2 border border-green-500 text-sm font-semibold
+                              rounded-md text-green-700 bg-teal-300 hover:bg-blue-50
+                              dark:border-blue-400 dark:text-white dark:bg-gray-800 dark:hover:bg-teal-700">
                         Exportar a Excel
-                    </button>
+                    </a>
                 </div>
             </form>
         </div>

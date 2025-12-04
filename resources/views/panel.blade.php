@@ -46,6 +46,7 @@
                     </a>
 
                 </div>
+        
 
             @else
                 {{-- Super Admin CON carrera seleccionada (vista tipo Bedel) --}}

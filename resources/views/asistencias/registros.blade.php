@@ -170,17 +170,6 @@
                                 Guardar asistencia
                             </button>
 
-                            {{-- Botón para ver porcentajes e incumplidores --}}
-                            <a href="{{ route('asistencias.reportes.porcentajes', [
-                                    'subject_id'    => $subjectId,
-                                    'commission_id' => $commissionId,
-                                ]) }}"
-                               class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent
-                                      rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                                      hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                Ver porcentajes e incumplidores
-                            </a>
-
                             <a href="{{ route('asistencias.index') }}"
                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-xs font-semibold
                                       text-gray-700 bg-white hover:bg-gray-50">

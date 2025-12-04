@@ -636,4 +636,72 @@ public function reportesPorcentajes(Request $request)
 
         return response()->stream($callback, 200, $headers);
     }
+    /**
+     * Exportar Detalle Completo de Asistencia a Excel (CSV)
+     * Matriz: Alumnos x Fechas
+     */
+    public function reportesDetalleCompletoExportarExcel(Request $request)
+    {
+        $data = $request->validate([
+            'commission_id' => ['required', 'exists:commissions,id'],
+        ]);
+
+        $commissionId = (int) $data['commission_id'];
+        $commission   = Commission::with('subject', 'students')->findOrFail($commissionId);
+
+        // Traer todas las asistencias de esa comisión
+        $attendances = Attendance::where('commission_id', $commissionId)
+            ->get();
+
+        // Fechas distintas ordenadas
+        $fechas = $attendances->pluck('fecha')->unique()->sort();
+
+        $fileName = sprintf(
+            'asistencia_detalle_%s_%s.csv',
+            $commission->nombre,
+            date('Y-m-d_H-i')
+        );
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ];
+
+        $callback = function () use ($commission, $fechas, $attendances) {
+            $handle = fopen('php://output', 'w');
+
+            // BOM para Excel
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Encabezados: Legajo, Apellido, Nombre, [Fecha 1], [Fecha 2], ...
+            $headerRow = ['Legajo', 'Apellido', 'Nombre'];
+            foreach ($fechas as $f) {
+                $headerRow[] = \Carbon\Carbon::parse($f)->format('d/m/Y');
+            }
+            fputcsv($handle, $headerRow);
+
+            // Filas por alumno
+            foreach ($commission->students as $student) {
+                $row = [
+                    $student->legajo,
+                    $student->apellido,
+                    $student->nombre,
+                ];
+
+                foreach ($fechas as $f) {
+                    // Buscar estado en memoria (colección)
+                    $att = $attendances->first(fn($a) =>
+                        $a->student_id == $student->id && $a->fecha == $f
+                    );
+                    $row[] = $att ? $att->estado : '-';
+                }
+
+                fputcsv($handle, $row);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

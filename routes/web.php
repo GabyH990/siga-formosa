@@ -61,6 +61,7 @@ Route::prefix('asistencias')->name('asistencias.')->group(function () {
     Route::get('reportes/detalle', [AsistenciaController::class, 'reportesDetalle'])->name('reportes.detalle');
     Route::post('reportes/detalle/guardar', [AsistenciaController::class, 'reportesDetalleGuardar'])->name('reportes.detalle.guardar');
     Route::get('reportes/detalle/exportar', [AsistenciaController::class, 'reportesExportarExcel'])->name('reportes.detalle.exportar');
+    Route::get('reportes/detalle/exportar-completo', [AsistenciaController::class, 'reportesDetalleCompletoExportarExcel'])->name('reportes.detalle.exportar_completo');
 
     Route::get('reportes/porcentajes', [AsistenciaController::class, 'reportesPorcentajes'])
     ->name('reportes.porcentajes');
@@ -123,6 +124,8 @@ Route::prefix('profesores')->name('profesores.')->group(function () {
     */
     Route::get('/estado-academico', [EstadoAcademicoController::class, 'index'])
         ->name('estado-academico.index');
+    Route::get('/estado-academico/exportar', [EstadoAcademicoController::class, 'exportarExcel'])
+        ->name('estado-academico.exportar');
 
     /*
     |--------------------------------------------------------------------------
