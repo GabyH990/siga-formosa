@@ -20,10 +20,11 @@
         </div>
 
         {{-- Tabla de auditoría --}}
+        <div class="p-[1px] border-t-4 border-violet-200 rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table class="min-w-full divide-y divide-indigo-200 dark:divide-gray-700">
+                    <thead class="bg-indigo-50 dark:bg-gray-700">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                             Fecha
@@ -48,7 +49,7 @@
                         </th>
                     </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-indigo-200 dark:divide-gray-700">
                     @forelse($logs as $log)
                         <tr>
                             <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -112,6 +113,7 @@
             <div class="p-4">
                 {{ $logs->links() }}
             </div>
+        </div>
         </div>
     </div>
 </x-app-interno-layout>

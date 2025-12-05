@@ -194,7 +194,7 @@
                                             Libro: <span class="font-semibold">{{ $state->libro }}</span> ·
                                         @endif
                                         @if($state->acta)
-                                            Acta: <span class="font-semibold">{{ $state->acta }}</span> ·
+                                            Folio: <span class="font-semibold">{{ $state->acta }}</span> ·
                                         @endif
                                         @if($state->tomo)
                                             Tomo: <span class="font-semibold">{{ $state->tomo }}</span>

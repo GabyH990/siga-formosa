@@ -19,7 +19,7 @@
 
                     {{-- Gestión de usuarios --}}
                     <a href="{{ route('superadmin.bedeles.index') }}"
-                       class="block bg-white backdrop-blur-md border border-blue-600 shadow rounded-lg p-6 hover:bg-blue-100 transition">
+                       class="block bg-white backdrop-blur-md border border-sky-400 shadow rounded-lg p-6 hover:bg-sky-100 transition">
                         <h2 class="text-xl font-semibold text-black">Gestión de usuarios</h2>
                         <p class="mt-2 text-sm text-black">
                             Crear y administrar usuarios Bedel y sus carreras asignadas.
@@ -28,7 +28,7 @@
 
                     {{-- Auditoría del sistema --}}
                     <a href="{{ route('superadmin.audit.index') }}"
-                       class="block bg-white backdrop-blur-md border border-red-400 shadow rounded-lg p-6 hover:bg-red-100 transition">
+                       class="block bg-white backdrop-blur-md border border-blue-400 shadow rounded-lg p-6 hover:bg-blue-100 transition">
                         <h2 class="text-xl font-semibold text-black">Auditoría</h2>
                         <p class="mt-2 text-sm text-black">
                             Ver acciones registradas en el sistema (altas, ediciones, desactivaciones, etc.).
@@ -110,7 +110,7 @@
 
                     {{-- Auditoría (también accesible desde aquí) --}}
                     <a href="{{ route('superadmin.audit.index') }}"
-                       class="block bg-white backdrop-blur-md border border-red-400 shadow rounded-lg p-6 hover:bg-red-100 transition">
+                       class="block bg-white backdrop-blur-md border border-indigo-400 shadow rounded-lg p-6 hover:bg-indigo-100 transition">
                         <h2 class="text-xl font-semibold text-black">Auditoría</h2>
                         <p class="mt-2 text-sm text-black">
                             Ver el historial de acciones realizadas en el sistema.
