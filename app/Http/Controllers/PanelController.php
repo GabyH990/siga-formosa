@@ -13,6 +13,12 @@ class PanelController extends Controller
         // Obtenemos al usuario autenticado
         $user = Auth::user();   // 👈 así el IDE no se queja
 
+        // --- LÓGICA DE RESET (Opción Minimalista) ---
+        if ($request->has('reset_career')) {
+            session()->forget('active_career_id');
+            return redirect()->route('panel');
+        }
+
         // ¿Es Super Admin?
         $esSuperAdmin = $user->role && $user->role->nombre === 'superadmin';
 
@@ -39,8 +45,8 @@ class PanelController extends Controller
         }
 
         return view('panel', [
-            'esSuperAdmin'  => $esSuperAdmin,
-            'activeCareer'  => $activeCareer,
+            'esSuperAdmin' => $esSuperAdmin,
+            'activeCareer' => $activeCareer,
         ]);
     }
 }
