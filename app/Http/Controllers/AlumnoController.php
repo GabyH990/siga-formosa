@@ -55,7 +55,9 @@ class AlumnoController extends Controller
             });
         }
 
-        $students = $query->orderBy('apellido')->paginate(15);
+        $students = $query->orderBy('apellido')
+            ->paginate(15)
+            ->appends($request->query());
 
         return view('alumnos.index', compact('students'));
     }
@@ -75,16 +77,16 @@ class AlumnoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'legajo'           => 'required|unique:students',
-            'nombre'           => 'required',
-            'apellido'         => 'required',
-            'dni'              => 'required|unique:students',
+            'legajo' => 'required|unique:students',
+            'nombre' => 'required',
+            'apellido' => 'required',
+            'dni' => 'required|unique:students',
             'fecha_nacimiento' => 'nullable|date',
-            'correo'           => 'nullable|email',
-            'telefono'         => 'nullable',
-            'direccion'        => 'nullable',
-            'cohorte'          => 'required|integer',
-            'career_id'        => 'required|exists:careers,id',
+            'correo' => 'nullable|email',
+            'telefono' => 'nullable',
+            'direccion' => 'nullable',
+            'cohorte' => 'required|integer',
+            'career_id' => 'required|exists:careers,id',
         ]);
 
         Student::create($validated);
@@ -94,8 +96,8 @@ class AlumnoController extends Controller
 
     public function edit($id)
     {
-        $student   = Student::findOrFail($id);
-        $careerId  = $this->getActiveCareerId();
+        $student = Student::findOrFail($id);
+        $careerId = $this->getActiveCareerId();
 
         $careers = $careerId
             ? Career::where('id', $careerId)->get()
@@ -109,16 +111,16 @@ class AlumnoController extends Controller
         $student = Student::findOrFail($id);
 
         $validated = $request->validate([
-            'legajo'           => 'required|unique:students,legajo,' . $student->id,
-            'nombre'           => 'required',
-            'apellido'         => 'required',
-            'dni'              => 'required|unique:students,dni,' . $student->id,
+            'legajo' => 'required|unique:students,legajo,' . $student->id,
+            'nombre' => 'required',
+            'apellido' => 'required',
+            'dni' => 'required|unique:students,dni,' . $student->id,
             'fecha_nacimiento' => 'nullable|date',
-            'correo'           => 'nullable|email',
-            'telefono'         => 'nullable',
-            'direccion'        => 'nullable',
-            'cohorte'          => 'required|integer',
-            'career_id'        => 'required|exists:careers,id',
+            'correo' => 'nullable|email',
+            'telefono' => 'nullable',
+            'direccion' => 'nullable',
+            'cohorte' => 'required|integer',
+            'career_id' => 'required|exists:careers,id',
         ]);
 
         $student->update($validated);
@@ -137,7 +139,7 @@ class AlumnoController extends Controller
             ->orderBy('subject_id')
             ->get();
 
-        $cursando  = $estados->where('estado', 'Cursando');
+        $cursando = $estados->where('estado', 'Cursando');
         $regulares = $estados->where('estado', 'Regular');
         $aprobadas = $estados->where('estado', 'Aprobada');
 
@@ -169,10 +171,10 @@ class AlumnoController extends Controller
             ->get();
 
         return view('alumnos.estado-editar', [
-            'student'         => $student,
-            'subjects'        => $subjects,
+            'student' => $student,
+            'subjects' => $subjects,
             'commissionNames' => $commissionNames,
-            'estados'         => $estados,
+            'estados' => $estados,
         ]);
     }
 
@@ -184,16 +186,16 @@ class AlumnoController extends Controller
         $student = Student::findOrFail($id);
 
         $validated = $request->validate([
-            'subject_id'          => ['required', 'exists:subjects,id'],
-            'commission_nombre'   => ['nullable', 'in:1.1,1.2,1.3,2.1,2.2,2.3'],
-            'estado'              => ['required', 'in:Cursando,Regular,Aprobada'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'commission_nombre' => ['nullable', 'in:1.1,1.2,1.3,2.1,2.2,2.3'],
+            'estado' => ['required', 'in:Cursando,Regular,Aprobada'],
             'anio_regularizacion' => ['nullable', 'integer'],
-            'tipo_aprobacion'     => ['nullable', 'in:directa,final'],
-            'libro'               => ['nullable', 'string', 'max:50'],
-            'acta'                => ['nullable', 'string', 'max:50'],
-            'tomo'                => ['nullable', 'string', 'max:50'],
-            'nota_final'          => ['nullable', 'numeric'],
-            'observaciones'       => ['nullable', 'string'],
+            'tipo_aprobacion' => ['nullable', 'in:directa,final'],
+            'libro' => ['nullable', 'string', 'max:50'],
+            'acta' => ['nullable', 'string', 'max:50'],
+            'tomo' => ['nullable', 'string', 'max:50'],
+            'nota_final' => ['nullable', 'numeric'],
+            'observaciones' => ['nullable', 'string'],
         ]);
 
         DB::transaction(function () use ($student, $validated) {
@@ -214,10 +216,10 @@ class AlumnoController extends Controller
                 $commission = Commission::firstOrCreate(
                     [
                         'subject_id' => $validated['subject_id'],
-                        'nombre'     => $commissionNombre,
+                        'nombre' => $commissionNombre,
                     ],
                     [
-                        'anio'    => $validated['anio_regularizacion'] ?? now()->year,
+                        'anio' => $validated['anio_regularizacion'] ?? now()->year,
                         'periodo' => $periodo,
                     ]
                 );
@@ -243,32 +245,32 @@ class AlumnoController extends Controller
             if ($estadoExistente) {
                 // Actualizo la misma fila (Cursando -> Regular -> Aprobada)
                 $estadoExistente->update([
-                    'commission_id'       => $commissionId,
-                    'estado'              => $validated['estado'],
+                    'commission_id' => $commissionId,
+                    'estado' => $validated['estado'],
                     'anio_regularizacion' => $validated['anio_regularizacion'] ?? null,
-                    'tipo_aprobacion'     => $validated['tipo_aprobacion'] ?? null,
-                    'libro'               => $validated['libro'] ?? null,
-                    'acta'                => $validated['acta'] ?? null,
-                    'tomo'                => $validated['tomo'] ?? null,
-                    'nota_final'          => $validated['nota_final'] ?? null,
-                    'observaciones'       => $validated['observaciones'] ?? null,
+                    'tipo_aprobacion' => $validated['tipo_aprobacion'] ?? null,
+                    'libro' => $validated['libro'] ?? null,
+                    'acta' => $validated['acta'] ?? null,
+                    'tomo' => $validated['tomo'] ?? null,
+                    'nota_final' => $validated['nota_final'] ?? null,
+                    'observaciones' => $validated['observaciones'] ?? null,
                 ]);
 
                 $estadoId = $estadoExistente->id;
             } else {
                 // Primera vez que se carga esa materia para este alumno
                 $nuevo = AcademicState::create([
-                    'student_id'          => $student->id,
-                    'subject_id'          => $validated['subject_id'],
-                    'commission_id'       => $commissionId,
-                    'estado'              => $validated['estado'],
+                    'student_id' => $student->id,
+                    'subject_id' => $validated['subject_id'],
+                    'commission_id' => $commissionId,
+                    'estado' => $validated['estado'],
                     'anio_regularizacion' => $validated['anio_regularizacion'] ?? null,
-                    'tipo_aprobacion'     => $validated['tipo_aprobacion'] ?? null,
-                    'libro'               => $validated['libro'] ?? null,
-                    'acta'                => $validated['acta'] ?? null,
-                    'tomo'                => $validated['tomo'] ?? null,
-                    'nota_final'          => $validated['nota_final'] ?? null,
-                    'observaciones'       => $validated['observaciones'] ?? null,
+                    'tipo_aprobacion' => $validated['tipo_aprobacion'] ?? null,
+                    'libro' => $validated['libro'] ?? null,
+                    'acta' => $validated['acta'] ?? null,
+                    'tomo' => $validated['tomo'] ?? null,
+                    'nota_final' => $validated['nota_final'] ?? null,
+                    'observaciones' => $validated['observaciones'] ?? null,
                 ]);
 
                 $estadoId = $nuevo->id;
