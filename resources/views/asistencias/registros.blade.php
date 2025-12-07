@@ -31,6 +31,7 @@
                             Cátedra
                         </label>
                         <select name="subject_id"
+                                onchange="this.form.submit()"
                                 class="w-full rounded-md border-gray-300 shadow-sm
                                        focus:border-blue-500 focus:ring-blue-500
                                        dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -50,6 +51,7 @@
                             Comisión
                         </label>
                         <select name="commission_id"
+                                onchange="if(this.value && this.form.fecha.value) this.form.submit()"
                                 class="w-full rounded-md border-gray-300 shadow-sm
                                        focus:border-blue-500 focus:ring-blue-500
                                        dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -71,6 +73,7 @@
                         <input type="date"
                                name="fecha"
                                value="{{ $fecha }}"
+                               onchange="if(this.value && this.form.commission_id.value) this.form.submit()"
                                class="w-full rounded-md border-gray-300 shadow-sm
                                       focus:border-blue-500 focus:ring-blue-500
                                       dark:bg-gray-700 dark:border-gray-600 dark:text-white">

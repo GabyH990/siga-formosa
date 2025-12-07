@@ -45,7 +45,7 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Comisión
                             </label>
-                            <select name="commission_nombre"
+                            <select name="commission_nombre" onchange="this.form.submit()"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <option value="">Seleccione comisión…</option>
                                 @foreach ($commissionOptions as $opt)
@@ -129,9 +129,9 @@
                                             <tr>
                                                 <th class="px-3 py-2 w-10">
                                                     <input type="checkbox" onclick="(function(cb){
-                                                               const boxes = cb.closest('table').querySelectorAll('tbody input[type=checkbox]');
-                                                               boxes.forEach(x => x.checked = cb.checked);
-                                                           })(this)">
+                                                                       const boxes = cb.closest('table').querySelectorAll('tbody input[type=checkbox]');
+                                                                       boxes.forEach(x => x.checked = cb.checked);
+                                                                   })(this)">
                                                 </th>
                                                 <th class="px-3 py-2 text-left">Legajo</th>
                                                 <th class="px-3 py-2 text-left">Apellido y Nombre</th>
@@ -176,9 +176,9 @@
                                             <tr>
                                                 <th class="px-3 py-2 w-10">
                                                     <input type="checkbox" onclick="(function(cb){
-                                                               const boxes = cb.closest('table').querySelectorAll('tbody input[type=checkbox]');
-                                                               boxes.forEach(x => x.checked = cb.checked);
-                                                           })(this)">
+                                                                       const boxes = cb.closest('table').querySelectorAll('tbody input[type=checkbox]');
+                                                                       boxes.forEach(x => x.checked = cb.checked);
+                                                                   })(this)">
                                                 </th>
                                                 <th class="px-3 py-2 text-left">Legajo</th>
                                                 <th class="px-3 py-2 text-left">Apellido y Nombre</th>
