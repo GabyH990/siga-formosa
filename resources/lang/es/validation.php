@@ -124,6 +124,10 @@ return [
             'integer'  => 'El legajo debe ser numérico.',
             'min'      => 'El legajo debe ser un número positivo.',
         ],
+         'correo' => [
+        'email'  => 'Debe ingresar un correo electrónico válido.',
+        'unique' => 'Este correo ya está registrado en el sistema.',
+    ],
     ],
 
     'attributes' => [

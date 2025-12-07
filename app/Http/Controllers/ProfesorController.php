@@ -114,10 +114,10 @@ class ProfesorController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'legajo'   => 'required|unique:professors',
+            'legajo'   => 'required|integer|min:1|regex:/^[0-9]+$/|unique:professors',
             'nombre'   => 'required',
             'apellido' => 'required',
-            'correo'   => 'nullable|email',
+             'correo' => 'nullable|email|unique:professors,correo',
             'telefono' => 'nullable',
             'titulo'   => 'nullable',
 
@@ -208,10 +208,10 @@ class ProfesorController extends Controller
         $professor = Professor::findOrFail($id);
 
         $validated = $request->validate([
-            'legajo'   => 'required|unique:professors,legajo,' . $professor->id,
+            'legajo'   => 'required|integer|min:1|regex:/^[0-9]+$/|unique:professors,legajo,' . $professor->id,
             'nombre'   => 'required',
             'apellido' => 'required',
-            'correo'   => 'nullable|email',
+            'correo' => 'nullable|email|unique:professors,correo,' . $id,
             'telefono' => 'nullable',
             'titulo'   => 'nullable',
 
