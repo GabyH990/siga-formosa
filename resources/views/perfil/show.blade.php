@@ -26,16 +26,47 @@
                 <div>
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Carrera Asignada</dt>
                     <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                        {{ $user->career->nombre ?? 'Todas / Ninguna' }}</dd>
+                        {{ $user->career->nombre ?? 'Todas / Ninguna' }}
+                    </dd>
                 </div>
             </dl>
         </div>
 
         <div class="mt-8 flex justify-end">
             <a href="{{ route('perfil.edit') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+               id="btn-editar-perfil"
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Editar Perfil
             </a>
         </div>
     </div>
+
+    {{-- SweetAlert2 (solo para la confirmación de edición) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnEditar = document.getElementById('btn-editar-perfil');
+            if (!btnEditar) return;
+
+            btnEditar.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const url = this.href;
+
+                Swal.fire({
+                    title: "¿Editar tu perfil?",
+                    text: "Vas a ingresar a la pantalla de edición de tu información personal.",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, continuar",
+                    cancelButtonText: "Cancelar"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-interno-layout>
