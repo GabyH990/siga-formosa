@@ -76,18 +76,42 @@ class AlumnoController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'legajo' => 'required|unique:students',
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'dni' => 'required|unique:students',
-            'fecha_nacimiento' => 'nullable|date',
-            'correo' => 'nullable|email',
-            'telefono' => 'nullable',
-            'direccion' => 'nullable',
-            'cohorte' => 'required|integer',
-            'career_id' => 'required|exists:careers,id',
-        ]);
+       $validated = $request->validate([
+    'legajo' => [
+        'required',
+        'integer',
+        'min:1',
+        'regex:/^[0-9]+$/',
+        'unique:students,legajo',
+    ],
+
+    'nombre' => 'required|string',
+    'apellido' => 'required|string',
+
+    'dni' => [
+        'required',
+        'integer',
+        'min:1',
+        'regex:/^[0-9]+$/',
+        'unique:students,dni',
+    ],
+
+    'fecha_nacimiento' => [
+        'required',
+        'date',
+        'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+        'after_or_equal:' . now()->subYears(100)->format('Y-m-d'),
+    ],
+
+    'correo' => 'nullable|email|unique:students,correo',
+
+    'telefono' => 'nullable|string',
+    'direccion' => 'nullable|string',
+
+    'cohorte' => 'required|integer',
+    'career_id' => 'required|exists:careers,id',
+]);
+
 
         Student::create($validated);
 
@@ -110,18 +134,41 @@ class AlumnoController extends Controller
     {
         $student = Student::findOrFail($id);
 
-        $validated = $request->validate([
-            'legajo' => 'required|unique:students,legajo,' . $student->id,
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'dni' => 'required|unique:students,dni,' . $student->id,
-            'fecha_nacimiento' => 'nullable|date',
-            'correo' => 'nullable|email',
-            'telefono' => 'nullable',
-            'direccion' => 'nullable',
-            'cohorte' => 'required|integer',
-            'career_id' => 'required|exists:careers,id',
-        ]);
+    $validated = $request->validate([
+    'legajo' => [
+        'required',
+        'integer',
+        'min:1',
+        'regex:/^[0-9]+$/',
+        'unique:students,legajo,' . $student->id,
+    ],
+
+    'nombre' => 'required|string',
+    'apellido' => 'required|string',
+
+    'dni' => [
+        'required',
+        'integer',
+        'min:1',
+        'regex:/^[0-9]+$/',
+        'unique:students,dni,' . $student->id,
+    ],
+
+    'fecha_nacimiento' => [
+        'required',
+        'date',
+        'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+        'after_or_equal:' . now()->subYears(100)->format('Y-m-d'),
+    ],
+
+    'correo' => 'nullable|email|unique:students,correo,' . $student->id,
+
+    'telefono' => 'nullable|string',
+    'direccion' => 'nullable|string',
+
+    'cohorte' => 'required|integer',
+    'career_id' => 'required|exists:careers,id',
+]);
 
         $student->update($validated);
 
