@@ -28,8 +28,8 @@
 <div class="flex items-center justify-between ...">
     <div class="w-28"></div> <!-- Espaciador -->
     <div class="flex-grow text-center">
-        <h1 class="text-2xl font-semibold drop-shadow-md 
-                   bg-gradient-to-r from-[#9b38f2] to-[#3b9dff] 
+        <h1 class="text-2xl font-semibold drop-shadow-md
+                   bg-gradient-to-r from-[#9b38f2] to-[#3b9dff]
                    bg-clip-text text-transparent"
             style="-webkit-text-stroke: 0.2px white;">
             SIGA – UTN
