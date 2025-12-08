@@ -157,10 +157,10 @@
                                                 Editar
                                             </a>
 
-                                            {{-- Desactivar --}}
+                                            {{-- Desactivar (SweetAlert2) --}}
                                             <form action="{{ route('profesores.destroy', $professor->id) }}" method="POST"
-                                                class="inline-block"
-                                                onsubmit="return confirm('¿Seguro que querés desactivar a este profesor?');">
+                                                class="inline-block form-desactivar"
+                                                data-name="{{ $professor->apellido }}, {{ $professor->nombre }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
@@ -169,10 +169,10 @@
                                                 </button>
                                             </form>
                                         @else
-                                            {{-- Activar --}}
+                                            {{-- Activar (SweetAlert2) --}}
                                             <form action="{{ route('profesores.activar', $professor->id) }}" method="POST"
-                                                class="inline-block"
-                                                onsubmit="return confirm('¿Activar nuevamente a este profesor?');">
+                                                class="inline-block form-activar"
+                                                data-name="{{ $professor->apellido }}, {{ $professor->nombre }}">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit"
@@ -207,4 +207,56 @@
             Volver al Panel
         </a>
     </div>
+
+    {{-- SweetAlert2 para Activar / Desactivar --}}
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Desactivar
+                document.querySelectorAll('.form-desactivar').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const name = this.dataset.name;
+
+                        Swal.fire({
+                            title: '¿Seguro que querés desactivar a este profesor?',
+                            text: name,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, desactivar',
+                            cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.submit();
+                            }
+                        });
+                    });
+                });
+
+                // Activar
+                document.querySelectorAll('.form-activar').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const name = this.dataset.name;
+
+                        Swal.fire({
+                            title: '¿Activar nuevamente a este profesor?',
+                            text: name,
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, activar',
+                            cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.submit();
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    @endpush
 </x-app-interno-layout>

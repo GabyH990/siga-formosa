@@ -6,7 +6,11 @@
     <div class="flex justify-center">
         <div class="w-full max-w-xl bg-violet-50 dark:bg-gray-800 shadow-md rounded-xl p-8">
 
-            <form method="POST" action="{{ route('profesores.update', $professor->id) }}" x-on:change="dirty = true">
+            <form
+                id="edit-professor-form"
+                method="POST"
+                action="{{ route('profesores.update', $professor->id) }}"
+            >
                 @csrf
                 @method('PUT')
 
@@ -126,4 +130,31 @@
             </form>
         </div>
     </div>
+
+    {{-- Script de confirmación con SweetAlert2 --}}
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('edit-professor-form');
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault(); // frenamos el envío normal
+
+                    Swal.fire({
+                        title: '¿Confirmar cambios?',
+                        text: 'Se guardarán los datos del profesor {{ $professor->apellido }}, {{ $professor->nombre }}.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, guardar',
+                        cancelButtonText: 'Cancelar',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // ahora sí, enviamos el form
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
+
 </x-app-interno-layout>

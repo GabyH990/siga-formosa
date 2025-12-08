@@ -14,6 +14,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- Estilos de Livewire --}}
     @livewireStyles
@@ -94,6 +95,7 @@
 
     {{-- Scripts de Livewire --}}
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

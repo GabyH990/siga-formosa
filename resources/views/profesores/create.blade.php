@@ -6,7 +6,12 @@
     <div class="flex justify-center">
         <div class="w-full max-w-xl bg-violet-50 dark:bg-gray-800 shadow-md rounded-xl p-8">
             
-            <form method="POST" action="{{ route('profesores.store') }}" x-on:change="dirty = true">
+            <form
+                id="create-professor-form"
+                method="POST"
+                action="{{ route('profesores.store') }}"
+                x-on:change="dirty = true"
+            >
                 @csrf
 
                 {{-- Legajo --}}
@@ -116,4 +121,51 @@
             </form>
         </div>
     </div>
+
+    @push('scripts')
+        {{-- SweetAlert2 (si ya lo cargás en el layout, podés borrar esta línea) --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('create-professor-form');
+                if (!form) return;
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault(); // frenamos el envío normal
+
+                    const formData = new FormData(form);
+
+                    const legajo   = formData.get('legajo')   || '';
+                    const nombre   = formData.get('nombre')   || '';
+                    const apellido = formData.get('apellido') || '';
+                    const correo   = formData.get('correo')   || '';
+                    const telefono = formData.get('telefono') || '';
+                    const titulo   = formData.get('titulo')   || '';
+
+                    const resumen = `
+Legajo:   ${legajo}
+Nombre:   ${nombre}
+Apellido: ${apellido}
+Correo:   ${correo || '-'}
+Teléfono: ${telefono || '-'}
+Título:   ${titulo || '-'}
+`;
+
+                    Swal.fire({
+                        title: '¿Los datos son correctos?',
+                        icon: 'question',
+                        html: '<pre style="text-align:left; white-space:pre-wrap;">' + resumen + '</pre>',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, guardar',
+                        cancelButtonText: 'Revisar',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // ahora sí, enviamos el formulario
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
 </x-app-interno-layout>
