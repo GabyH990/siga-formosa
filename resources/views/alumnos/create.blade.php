@@ -6,7 +6,8 @@
     <div class="max-w-4xl mx-auto">
         <div class="rounded-lg p-[2px] bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-white rounded-lg p-6 shadow">
-                <form method="POST" action="{{ route('alumnos.store') }}" x-on:change="dirty = true">
+                {{-- IMPORTANTE: id para el JS --}}
+                <form id="form-create-alumno" method="POST" action="{{ route('alumnos.store') }}" x-on:change="dirty = true">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -45,8 +46,9 @@
                         <!-- Fecha Nacimiento -->
                         <div>
                             <label class="block text-sm font-medium text-black dark:text-white">Fecha Nacimiento</label>
-                            <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}"
+                            <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
+                            @error('fecha_nacimiento') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Cohorte -->
@@ -65,7 +67,8 @@
                                 <option value="">Seleccione Carrera</option>
                                 @foreach($careers as $career)
                                     <option value="{{ $career->id }}" {{ old('career_id') == $career->id ? 'selected' : '' }}>
-                                        {{ $career->nombre }}</option>
+                                        {{ $career->nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('career_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -76,6 +79,7 @@
                             <label class="block text-sm font-medium text-black dark:text-white">Correo</label>
                             <input type="email" name="correo" value="{{ old('correo') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
+                            @error('correo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Teléfono -->
@@ -83,6 +87,7 @@
                             <label class="block text-sm font-medium text-black dark:text-white">Teléfono</label>
                             <input type="text" name="telefono" value="{{ old('telefono') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
+                            @error('telefono') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Dirección -->
@@ -90,6 +95,7 @@
                             <label class="block text-sm font-medium text-black dark:text-white">Dirección</label>
                             <input type="text" name="direccion" value="{{ old('direccion') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 text-gray-600 dark:text-white">
+                            @error('direccion') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -98,7 +104,10 @@
                             class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                             Cancelar
                         </a>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+
+                        {{-- Botón que dispara validación + confirmación --}}
+                        <button type="button" id="btn-guardar"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Guardar
                         </button>
                     </div>
@@ -106,4 +115,69 @@
             </div>
         </div>
     </div>
+
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-create-alumno');
+            const btnGuardar = document.getElementById('btn-guardar');
+
+            if (!form || !btnGuardar) return;
+
+            btnGuardar.addEventListener('click', () => {
+                // 1) Validación HTML5 primero (required, tipo email, etc.)
+                if (typeof form.reportValidity === 'function') {
+                    if (!form.reportValidity()) {
+                        return; // si falla, no sigue a la confirmación
+                    }
+                } else if (!form.checkValidity()) {
+                    return;
+                }
+
+                // 2) Si el form es válido en el cliente, armamos el resumen
+                const legajo   = form.legajo.value || '';
+                const dni      = form.dni.value || '';
+                const nombre   = form.nombre.value || '';
+                const apellido = form.apellido.value || '';
+                const fechaNac = form.fecha_nacimiento.value || '';
+                const cohorte  = form.cohorte.value || '';
+
+                const careerSelect = form.career_id;
+                const carreraTexto = (careerSelect && careerSelect.value)
+                    ? careerSelect.options[careerSelect.selectedIndex].text
+                    : '';
+
+                const correo    = form.correo.value || '';
+                const telefono  = form.telefono.value || '';
+                const direccion = form.direccion.value || '';
+
+                Swal.fire({
+                    title: '¿Confirmar registro del alumno?',
+                    html: `
+                        <div style="text-align:left">
+                            <p><strong>Legajo:</strong> ${legajo}</p>
+                            <p><strong>DNI:</strong> ${dni}</p>
+                            <p><strong>Nombre:</strong> ${apellido}, ${nombre}</p>
+                            <p><strong>Fecha de Nacimiento:</strong> ${fechaNac || '—'}</p>
+                            <p><strong>Cohorte:</strong> ${cohorte}</p>
+                            <p><strong>Carrera:</strong> ${carreraTexto || '—'}</p>
+                            <p><strong>Correo:</strong> ${correo || '—'}</p>
+                            <p><strong>Teléfono:</strong> ${telefono || '—'}</p>
+                            <p><strong>Dirección:</strong> ${direccion || '—'}</p>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'Revisar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // acá va a store(), se corre la validación de Laravel
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-interno-layout>

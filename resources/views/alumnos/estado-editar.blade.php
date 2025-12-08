@@ -34,7 +34,11 @@
                     Cargar / editar estado de una materia
                 </h3>
 
-                <form method="POST" action="{{ route('alumnos.estado.guardar', $student->id) }}" class="space-y-4">
+                {{-- 👇 CAMBIO: agrego id al form --}}
+                <form id="form-estado-academico"
+                      method="POST"
+                      action="{{ route('alumnos.estado.guardar', $student->id) }}"
+                      class="space-y-4">
                     @csrf
 
                     {{-- Materia --}}
@@ -200,7 +204,10 @@
                                   dark:border-gray-600 dark:text-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700">
                             Cancelar
                         </a>
-                        <button type="submit"
+
+                        {{-- 👇 CAMBIO: type="button" + id --}}
+                        <button type="button"
+                                id="btn-guardar-estado"
                                 class="px-4 py-2 rounded-md text-sm font-semibold text-white
                                        bg-blue-600 hover:bg-blue-700">
                             Guardar
@@ -224,7 +231,7 @@
                 @else
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs md:text-sm">
-                            <thead class="bg-white/20 dark:bg-white/20">
+                            <thead class="bg-white/20 dark:bg:white/20">
                                 <tr>
                                     <th class="px-4 py-2 text-left text-black dark:text-white">Materia</th>
                                     <th class="px-4 py-2 text-left text-black dark:text-white">Comisión</th>
@@ -266,4 +273,60 @@
             </div>
         </div>
     </div>
+
+    {{-- SweetAlert2 + confirmación de guardado --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-estado-academico');
+            const btnGuardar = document.getElementById('btn-guardar-estado');
+
+            if (!form || !btnGuardar) return;
+
+            btnGuardar.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // 1) Validación HTML5 (required, formatos, etc.)
+                if (typeof form.reportValidity === 'function') {
+                    if (!form.reportValidity()) {
+                        return;
+                    }
+                } else if (!form.checkValidity()) {
+                    return;
+                }
+
+                // 2) Preparo datos básicos para el resumen
+                const subjectSelect = form.subject_id;
+                const materiaTexto = (subjectSelect && subjectSelect.value)
+                    ? subjectSelect.options[subjectSelect.selectedIndex].text
+                    : '';
+
+                const estado = form.estado ? form.estado.value : '';
+                const tipoAprobSelect = form.tipo_aprobacion;
+                const tipoAprob = tipoAprobSelect ? tipoAprobSelect.value : '';
+
+                Swal.fire({
+                    title: '¿Guardar estado académico?',
+                    html: `
+                        <div style="text-align:left">
+                            <p><strong>Materia:</strong> ${materiaTexto || '—'}</p>
+                            <p><strong>Estado:</strong> ${estado || '—'}</p>
+                            ${estado === 'Aprobada'
+                                ? `<p><strong>Tipo de aprobación:</strong> ${tipoAprob || '—'}</p>`
+                                : ''
+                            }
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // acá entra al controlador y corre las validaciones de Laravel
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-interno-layout>

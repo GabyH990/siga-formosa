@@ -28,7 +28,8 @@
 
         {{-- Formulario de edición --}}
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <form method="POST" action="{{ route('alumnos.update', $student->id) }}" class="space-y-4">
+            {{-- 👇 CAMBIO MÍNIMO: agrego id al form --}}
+            <form id="form-edit-alumno" method="POST" action="{{ route('alumnos.update', $student->id) }}" class="space-y-4">
                 @csrf
                 @method('PUT')
 
@@ -210,7 +211,9 @@
                         Cancelar
                     </a>
 
-                    <button type="submit"
+                    {{-- 👇 CAMBIO MÍNIMO: botón pasa a type="button" y le damos id --}}
+                    <button type="button"
+                            id="btn-guardar-cambios"
                             class="px-4 py-2 rounded-md text-sm font-semibold text-white
                                    bg-blue-600 hover:bg-blue-700">
                         Guardar cambios
@@ -220,4 +223,52 @@
         </div>
     </div>
 </div>
+
+{{-- SweetAlert2 (si no lo tenés en el layout) --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('form-edit-alumno');
+        const btnGuardar = document.getElementById('btn-guardar-cambios');
+
+        if (!form || !btnGuardar) return;
+
+        btnGuardar.addEventListener('click', () => {
+            // 1) Validar HTML5 primero (required, formatos, etc.)
+            if (typeof form.reportValidity === 'function') {
+                if (!form.reportValidity()) {
+                    return;
+                }
+            } else if (!form.checkValidity()) {
+                return;
+            }
+
+            // 2) Armar un pequeño resumen para confirmar
+            const apellido = form.apellido.value || '';
+            const nombre   = form.nombre.value || '';
+            const legajo   = form.legajo.value || '';
+            const dni      = form.dni.value || '';
+
+            Swal.fire({
+                title: '¿Guardar cambios del alumno?',
+                html: `
+                    <div style="text-align:left">
+                        <p><strong>Alumno:</strong> ${apellido}, ${nombre}</p>
+                        <p><strong>Legajo:</strong> ${legajo || '—'}</p>
+                        <p><strong>DNI:</strong> ${dni || '—'}</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'Revisar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // acá va a tu AlumnoController@update
+                }
+            });
+        });
+    });
+</script>
 </x-app-interno-layout>
