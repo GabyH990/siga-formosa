@@ -41,8 +41,19 @@ RUN composer install --prefer-dist --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# 3. Optimización de Laravel
-RUN sh -c "php artisan config:cache && php artisan route:cache && php artisan view:cache"
+# --- GENERACIÓN DE CLAVE Y OPTIMIZACIÓN DE LARAVEL ---
+
+# 3. Generar Clave (Debe ir antes de config:cache)
+RUN php artisan key:generate
+
+# 4. Optimización de Configuración (Configura el caché basándose en la nueva clave)
+RUN php artisan config:cache
+
+# 5. Optimización de Rutas
+RUN php artisan route:cache
+
+# 6. Optimización de Vistas
+RUN php artisan view:cache
 
 # Otorga permisos de escritura al directorio 'storage'
 RUN chown -R www-data:www-data /var/www/storage \
@@ -51,5 +62,5 @@ RUN chown -R www-data:www-data /var/www/storage \
 # Expone el puerto por defecto (8000 para el servidor PHP integrado)
 EXPOSE 8000
 
-# Comando final (CMD): Se usará como el comando de inicio si no se especifica otro en Render
-CMD sh -c "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+# Comando final (CMD): Limpia caché (por seguridad), migra, seedea e inicia el servidor.
+CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
