@@ -102,14 +102,14 @@
                                             Editar
                                         </a>
 
-                                        {{-- Eliminar --}}
+                                        {{-- Eliminar con SweetAlert2 --}}
                                         <form action="{{ route('alumnos.destroy', $student->id) }}" method="POST"
-                                            class="inline-block"
-                                            onsubmit="return confirm('¿Seguro que deseas eliminar este alumno? Se borrarán también sus estados académicos, asistencias y relaciones con comisiones.');">
+                                            class="inline-block form-eliminar-alumno">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 ml-2">
+                                            <button type="button"
+                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 ml-2 btn-eliminar-alumno"
+                                                data-nombre="{{ $student->apellido }}, {{ $student->nombre }}">
                                                 Eliminar
                                             </button>
                                         </form>
@@ -139,5 +139,37 @@
             Volver al Panel
         </a>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const botonesEliminar = document.querySelectorAll('.btn-eliminar-alumno');
+
+                botonesEliminar.forEach((boton) => {
+                    boton.addEventListener('click', function (e) {
+                        e.preventDefault();
+
+                        const form = this.closest('form');
+                        const nombre = this.getAttribute('data-nombre') || 'este alumno';
+
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: `Se eliminará ${nombre} y también sus estados académicos, asistencias y relaciones con comisiones.`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6b7280',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    @endpush
 
 </x-app-interno-layout>
