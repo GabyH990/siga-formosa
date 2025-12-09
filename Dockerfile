@@ -4,7 +4,7 @@
 
 FROM php:8.3-fpm-alpine
 
-# Instala dependencias del sistema y extensiones de PHP.
+# Instala dependencias del sistema y extensiones de PHP (PostgreSQL, Node.js).
 RUN apk update && apk add --no-cache \
     git \
     openssl \
@@ -35,28 +35,29 @@ COPY . .
 
 # --- FASE DE CONSTRUCCIÓN/OPTIMIZACIÓN (BUILD STAGE) ---
 
-# 1. Instala dependencias de Composer
+# 1. Instala dependencias de Composer (separa RUN para mejor caché)
 RUN composer install --prefer-dist --no-dev --optimize-autoloader
 
-# 2. Instala dependencias de Node.js y compila assets
+# 2. Instala dependencias de Node.js
 RUN npm install
+
+# 3. Compila assets de frontend
 RUN npm run build
 
 # --- SOLUCIÓN CRÍTICA: COPIA .env.example a .env ---
-# Esto permite que los comandos de Artisan (key:generate y config:cache) funcionen
-# al tener un archivo .env en la ruta /var/www/
+# Permite que los comandos de Artisan modifiquen el .env y usen variables de entorno.
 RUN cp .env.example .env
 
-# 3. Generar Clave (Debe ir antes de config:cache)
+# 4. Generar Clave (Debe ir antes de config:cache)
 RUN php artisan key:generate
 
-# 4. Optimización de Configuración
+# 5. Optimización de Configuración
 RUN php artisan config:cache
 
-# 5. Optimización de Rutas
+# 6. Optimización de Rutas
 RUN php artisan route:cache
 
-# 6. Optimización de Vistas
+# 7. Optimización de Vistas
 RUN php artisan view:cache
 
 # Otorga permisos de escritura al directorio 'storage'
@@ -66,5 +67,19 @@ RUN chown -R www-data:www-data /var/www/storage \
 # Expone el puerto por defecto (8000 para el servidor PHP integrado)
 EXPOSE 8000
 
-# Comando final (CMD): Se utiliza como fallback si Render no tiene un Start Command.
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+# --- COMANDO FINAL (RUNTIME) ---
+# Se utiliza el servidor PHP incorporado.
+# Orden CRÍTICO para evitar el error "relation cache does not exist":
+# 1. Limpieza de cache de configuración (Seguro)
+# 2. Migración (Crea las tablas 'cache' y 'sessions')
+# 3. Limpieza de Cache/Rutas (Ahora que las tablas existen)
+# 4. Seeding
+# 5. Inicio del Servidor
+
+CMD sh -c " \
+    php artisan config:clear && \
+    php artisan migrate --force && \
+    php artisan cache:clear && php artisan route:clear && php artisan view:clear && \
+    php artisan db:seed --force && \
+    php artisan serve --host=0.0.0.0 --port=8000 \
+"
