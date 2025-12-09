@@ -1,4 +1,5 @@
-# --- Dockerfile Sencillo para Laravel en Render ---
+# --- Dockerfile Final y Optimizado para Render ---
+# Archivo: Dockerfile
 # Base: PHP 8.3 FPM con Alpine Linux (para ser ligero)
 
 FROM php:8.3-fpm-alpine
@@ -41,12 +42,15 @@ RUN composer install --prefer-dist --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# --- GENERACIÓN DE CLAVE Y OPTIMIZACIÓN DE LARAVEL ---
+# --- SOLUCIÓN CRÍTICA: COPIA .env.example a .env ---
+# Esto permite que los comandos de Artisan (key:generate y config:cache) funcionen
+# al tener un archivo .env en la ruta /var/www/
+RUN cp .env.example .env
 
 # 3. Generar Clave (Debe ir antes de config:cache)
 RUN php artisan key:generate
 
-# 4. Optimización de Configuración (Configura el caché basándose en la nueva clave)
+# 4. Optimización de Configuración
 RUN php artisan config:cache
 
 # 5. Optimización de Rutas
@@ -62,5 +66,5 @@ RUN chown -R www-data:www-data /var/www/storage \
 # Expone el puerto por defecto (8000 para el servidor PHP integrado)
 EXPOSE 8000
 
-# Comando final (CMD): Limpia caché (por seguridad), migra, seedea e inicia el servidor.
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+# Comando final (CMD): Se utiliza como fallback si Render no tiene un Start Command.
+CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
