@@ -49,10 +49,16 @@
                                     DNI</th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
-                                    Carrera</th>
+                                    Fecha de nacimiento</th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
-                                    Cohorte</th>
+                                    Correo</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
+                                    Teléfono</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
+                                    Dirección</th>
                                 <th
                                     class="px-6 py-3 text-right text-xs font-medium text-black dark:text-gray-300 uppercase tracking-wider">
                                     Acciones</th>
@@ -71,10 +77,16 @@
                                         {{ $student->dni }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
-                                        {{ $student->career->codigo ?? '-' }}
+                                        {{ optional($student->fecha_nacimiento) ? \Carbon\Carbon::parse($student->fecha_nacimiento)->format('d/m/Y') : '-' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
-                                        {{ $student->cohorte }}
+                                        {{ $student->correo }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
+                                        {{ $student->telefono }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-black dark:text-gray-400">
+                                        {{ $student->direccion }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
 
@@ -106,7 +118,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6"
+                                    <td colspan="8"
                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
                                         No se encontraron alumnos para los filtros aplicados.</td>
                                 </tr>
