@@ -1,7 +1,7 @@
-# --- Dockerfile Todo-en-Uno para Render ---
+# --- Dockerfile Definitivo para Render ---
 FROM php:8.3-fpm-alpine
 
-# 1. Instalar dependencias del sistema
+# 1. Instalar dependencias
 RUN apk update && apk add --no-cache \
     git \
     openssl \
@@ -17,24 +17,22 @@ RUN apk update && apk add --no-cache \
 # 2. Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# 3. Configurar directorio de trabajo
+# 3. Directorio de trabajo
 WORKDIR /var/www
 
-# 4. Copiar archivos del proyecto
+# 4. Copiar archivos
 COPY . .
 
-# 5. Instalar dependencias de PHP y Node
+# 5. Instalar dependencias
 RUN composer install --prefer-dist --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# 6. Configuración inicial básica
-# Copiamos .env para que key:generate funcione.
-# IMPORTANTE: NO ejecutamos config:cache aquí para evitar congelar credenciales viejas.
+# 6. Configuración inicial (.env y key)
 RUN cp .env.example .env
 RUN php artisan key:generate
 
-# 7. Permisos de carpeta
+# 7. Permisos
 RUN chown -R www-data:www-data /var/www/storage \
     && chmod -R 775 /var/www/storage
 
@@ -42,32 +40,35 @@ RUN chown -R www-data:www-data /var/www/storage \
 EXPOSE 8000
 
 # -----------------------------------------------------------
-# 9. CREACIÓN DEL SCRIPT DE INICIO (ENTRYPOINT)
-# Escribimos el script directamente en el contenedor
+# 9. SCRIPT DE INICIO (Con Cache Strategy)
 # -----------------------------------------------------------
+# Explicación del cambio:
+# 1. config:clear primero para que las migraciones lean las variables de entorno crudas.
+# 2. config:cache AL FINAL para "congelar" esas variables correctas para que el servidor las use.
 RUN printf "#!/bin/sh\n\
 set -e\n\
 \n\
-echo '🚀 Iniciando contenedor en Render...'\n\
+echo '🚀 Iniciando contenedor...'\n\
 \n\
-echo '🧹 Limpiando caché antigua para leer variables reales...'\n\
+echo '🧹 Limpiando caché para migraciones...'\n\
 php artisan config:clear\n\
-php artisan cache:clear\n\
-php artisan route:clear\n\
-php artisan view:clear\n\
 \n\
 echo '📦 Ejecutando migraciones...'\n\
 php artisan migrate --force\n\
 \n\
-echo '🌱 Ejecutando seeders (idempotentes)...'\n\
+echo '🌱 Ejecutando seeders...'\n\
 php artisan db:seed --force\n\
 \n\
-echo '🔥 Arrancando servidor Laravel...'\n\
+echo '📝 Generando caché de configuración para el servidor...'\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
+\n\
+echo '🔥 Arrancando servidor...'\n\
 exec php artisan serve --host=0.0.0.0 --port=8000\n\
 " > /usr/local/bin/start-container
 
-# Hacemos el script ejecutable
 RUN chmod +x /usr/local/bin/start-container
 
-# 10. Definimos el comando de inicio
+# 10. Comando de inicio
 CMD ["/usr/local/bin/start-container"]
