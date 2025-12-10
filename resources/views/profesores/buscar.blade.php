@@ -1,4 +1,6 @@
 <x-app-interno-layout>
+    @section('title', 'Buscar Profesor – SIGA')
+
     <x-slot name="header">
         Buscar Profesor para Editar
     </x-slot>
