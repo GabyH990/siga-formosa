@@ -1,10 +1,7 @@
-# --- Dockerfile Final y Optimizado para Render ---
-# Archivo: Dockerfile
-# Base: PHP 8.3 FPM con Alpine Linux (para ser ligero)
-
+# --- Dockerfile Todo-en-Uno para Render ---
 FROM php:8.3-fpm-alpine
 
-# Instala dependencias del sistema y extensiones de PHP (PostgreSQL, Node.js).
+# 1. Instalar dependencias del sistema
 RUN apk update && apk add --no-cache \
     git \
     openssl \
@@ -14,72 +11,63 @@ RUN apk update && apk add --no-cache \
     npm \
     make \
     g++ \
-    \
-    # Instala las extensiones de PHP necesarias.
-    && docker-php-ext-install pdo_pgsql \
-    && docker-php-ext-install opcache \
-    && docker-php-ext-install pcntl \
-    && docker-php-ext-install exif \
-    \
-    # Limpia la caché.
+    && docker-php-ext-install pdo_pgsql opcache pcntl exif \
     && rm -rf /var/cache/apk/*
 
-# Instala Composer globalmente
+# 2. Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Establece el directorio de trabajo (ROOT de la aplicación)
+# 3. Configurar directorio de trabajo
 WORKDIR /var/www
 
-# Copia los archivos del proyecto
+# 4. Copiar archivos del proyecto
 COPY . .
 
-# --- FASE DE CONSTRUCCIÓN/OPTIMIZACIÓN (BUILD STAGE) ---
-
-# 1. Instala dependencias de Composer (separa RUN para mejor caché)
+# 5. Instalar dependencias de PHP y Node
 RUN composer install --prefer-dist --no-dev --optimize-autoloader
-
-# 2. Instala dependencias de Node.js
 RUN npm install
-
-# 3. Compila assets de frontend
 RUN npm run build
 
-# --- SOLUCIÓN CRÍTICA: COPIA .env.example a .env ---
-# Permite que los comandos de Artisan modifiquen el .env y usen variables de entorno.
+# 6. Configuración inicial básica
+# Copiamos .env para que key:generate funcione.
+# IMPORTANTE: NO ejecutamos config:cache aquí para evitar congelar credenciales viejas.
 RUN cp .env.example .env
-
-# 4. Generar Clave (Debe ir antes de config:cache)
 RUN php artisan key:generate
 
-# 5. Optimización de Configuración
-RUN php artisan config:cache
-
-# 6. Optimización de Rutas
-RUN php artisan route:cache
-
-# 7. Optimización de Vistas
-RUN php artisan view:cache
-
-# Otorga permisos de escritura al directorio 'storage'
+# 7. Permisos de carpeta
 RUN chown -R www-data:www-data /var/www/storage \
     && chmod -R 775 /var/www/storage
 
-# Expone el puerto por defecto (8000 para el servidor PHP integrado)
+# 8. Exponer puerto
 EXPOSE 8000
 
-# --- COMANDO FINAL (RUNTIME) ---
-# Se utiliza el servidor PHP incorporado.
-# Orden CRÍTICO para evitar el error "relation cache does not exist":
-# 1. Limpieza de cache de configuración (Seguro)
-# 2. Migración (Crea las tablas 'cache' y 'sessions')
-# 3. Limpieza de Cache/Rutas (Ahora que las tablas existen)
-# 4. Seeding
-# 5. Inicio del Servidor
+# -----------------------------------------------------------
+# 9. CREACIÓN DEL SCRIPT DE INICIO (ENTRYPOINT)
+# Escribimos el script directamente en el contenedor
+# -----------------------------------------------------------
+RUN printf "#!/bin/sh\n\
+set -e\n\
+\n\
+echo '🚀 Iniciando contenedor en Render...'\n\
+\n\
+echo '🧹 Limpiando caché antigua para leer variables reales...'\n\
+php artisan config:clear\n\
+php artisan cache:clear\n\
+php artisan route:clear\n\
+php artisan view:clear\n\
+\n\
+echo '📦 Ejecutando migraciones...'\n\
+php artisan migrate --force\n\
+\n\
+echo '🌱 Ejecutando seeders (idempotentes)...'\n\
+php artisan db:seed --force\n\
+\n\
+echo '🔥 Arrancando servidor Laravel...'\n\
+exec php artisan serve --host=0.0.0.0 --port=8000\n\
+" > /usr/local/bin/start-container
 
-CMD sh -c " \
-    php artisan config:clear && \
-    php artisan migrate --force && \
-    php artisan cache:clear && php artisan route:clear && php artisan view:clear && \
-    php artisan db:seed --force && \
-    php artisan serve --host=0.0.0.0 --port=8000 \
-"
+# Hacemos el script ejecutable
+RUN chmod +x /usr/local/bin/start-container
+
+# 10. Definimos el comando de inicio
+CMD ["/usr/local/bin/start-container"]
