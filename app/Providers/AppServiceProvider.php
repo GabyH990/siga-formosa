@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <--- 1. IMPORTANTE: Importamos el Facade URL
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Professor;
@@ -26,12 +27,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // ----------------------------------------------------------------
+        // CORRECCIÓN PARA RENDER (HTTPS)
+        // ----------------------------------------------------------------
+        // Si la aplicación está en producción, forzamos que todos los enlaces
+        // (incluyendo los de Vite/CSS/JS) se generen con HTTPS.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         /**
          * Registramos el observer de auditoría para los modelos clave.
-         *
-         * Cada vez que se haga create/update/delete sobre estos modelos,
-         * AuditObserver se va a ejecutar y guardará el registro en la tabla
-         * de auditorías (según cómo lo tengas implementado).
          */
         User::observe(AuditObserver::class);
         Student::observe(AuditObserver::class);
