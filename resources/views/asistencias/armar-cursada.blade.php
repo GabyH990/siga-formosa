@@ -13,12 +13,6 @@
                 class="inline-flex items-center px-4 py-2 rounded-md border border-purple-300 bg-purple-500 text-sm font-medium text-white hover:bg-purple-700">
                 ← Volver al módulo de Asistencia
             </a>
-
-            @if (session('success'))
-                <div class="text-sm text-cyan-700 bg-cyan-100 border border-cyan-300 px-3 py-2 rounded-md">
-                    {{ session('success') }}
-                </div>
-            @endif
         </div>
 
         {{-- Filtros principales (GET) --}}
@@ -87,7 +81,7 @@
 
                         <div class="flex md:justify-end">
                             <button type="submit"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-300 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                 Actualizar listas
                             </button>
                         </div>

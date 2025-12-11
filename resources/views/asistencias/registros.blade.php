@@ -77,9 +77,9 @@
 
                 <div class="mt-4">
                     <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-purple-400 border border-transparent
+                            class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent
                                    rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                                   hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Cargar planilla
                     </button>
                 </div>
@@ -162,17 +162,11 @@
 
                         <div class="mt-4 flex flex-wrap items-center gap-3">
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-purple-500 border border-transparent
+                                    class="inline-flex items-center px-4 py-2 bg-purple-600 border border-transparent
                                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
                                            hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                                 Guardar asistencia
                             </button>
-
-                            <a href="{{ route('asistencias.index') }}"
-                               class="inline-flex items-center px-4 py-2 border border-indigo-300 rounded-md text-xs font-semibold
-                                      text-white bg-indigo-400 hover:bg-indigo-700">
-                                Volver al módulo de Asistencia
-                            </a>
                         </div>
                     </form>
                 @endif

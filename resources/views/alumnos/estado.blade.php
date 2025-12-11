@@ -1,12 +1,12 @@
 <x-app-interno-layout>
     @section('title', 'Estado Académico – SIGA')
-    
+
     <x-slot name="header">
         Estado Académico de {{ $student->apellido }}, {{ $student->nombre }}
     </x-slot>
 
     <div class="space-y-6">
-        
+
         {{-- ==========================================
              ENCABEZADO DEL ALUMNO
              ========================================== --}}
@@ -18,7 +18,7 @@
                             {{ $student->apellido }}, {{ $student->nombre }}
                         </h2>
 
-                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <p class="text-sm text-gray-900 dark:text-gray-300">
                             Legajo: <span class="font-semibold">{{ $student->legajo }}</span>
 
                             @if($student->career)
@@ -66,7 +66,7 @@
                 @else
                     <div class="space-y-3">
                         @foreach($cursando as $state)
-                            <div class="border border-violet-100 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
+                            <div class="border border-violet-300 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -102,7 +102,7 @@
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b-2 border-cyan-200 dark:border-cyan-800 pb-1">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b-2 border-indigo-200 dark:border-indigo-800 pb-1">
                         Regulares
                     </h3>
                 </div>
@@ -118,7 +118,7 @@
                                 $finalPendiente = is_null($state->tipo_aprobacion);
                             @endphp
 
-                            <div class="border border-violet-100 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
+                            <div class="border border-violet-300 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -157,7 +157,7 @@
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b-2 border-green-200 dark:border-green-800 pb-1">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b-2 border-indigo-200 dark:border-indigo-800 pb-1">
                         Aprobadas
                     </h3>
                 </div>
@@ -169,7 +169,7 @@
                 @else
                     <div class="space-y-3">
                         @foreach($aprobadas as $state)
-                            <div class="border border-violet-100 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
+                            <div class="border border-violet-300 dark:border-violet-800 rounded-lg p-3 hover:bg-violet-50 dark:hover:bg-violet-900/50 transition">
                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -197,7 +197,7 @@
                                         </p>
                                     </div>
 
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200">
                                         Aprobada
                                     </span>
                                 </div>
@@ -210,13 +210,26 @@
 
     </div>
 
-    {{-- Botón de cierre/cancelar --}}
-    <div class="flex justify-center mt-8">
+   <div class="mt-8">
+    @if(request('from') === 'alumnos')
         <a href="{{ route('alumnos.index') }}"
-           class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded shadow transition">
-            ← Volver a Módulo Alumnos
+           class="px-4 py-2 bg-violet-500 text-white rounded hover:bg-violet-600 transition">
+           ← Volver a alumnos
         </a>
-    </div>
+    @elseif(request('from') === 'estado_academico')
+        <a href="{{ route('estado-academico.index') }}"
+           class="px-4 py-2 bg-violet-500 text-white rounded hover:bg-violet-600 transition">
+           ← Volver a estado académico
+        </a>
+    @else 
+    <a href="{{ route('panel') }}"
+            class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded shadow transition">
+            ← Volver al Panel
+        </a>
+    @endif
+</div>
+
+
 
     {{-- Script de confirmación con SweetAlert2 --}}
     @push('scripts')
@@ -225,7 +238,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const btnEditarEstado = document.getElementById('btn-estado-editar');
-                
+
                 if (!btnEditarEstado) return;
 
                 btnEditarEstado.addEventListener('click', (e) => {

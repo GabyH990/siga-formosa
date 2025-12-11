@@ -6,12 +6,12 @@
 
     <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
         <div class="space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-violet-950 shadow rounded-lg p-6">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <div class="w-full md:w-1/2">
                     <form method="GET" action="{{ route('alumnos.index') }}" class="flex gap-2">
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Buscar por Legajo, Apellido, DNI..."
-                            class="w-full rounded-md border-violet-300 shadow-sm
+                            placeholder="Buscar por Legajo, Apellido, DNI..." class="w-full rounded-md border-violet-300 shadow-sm
                                    bg-white text-gray-900 placeholder-gray-500
                                    focus:border-violet-500 focus:ring-violet-900
                                    dark:bg-indigo-300 dark:border-violet-600
@@ -35,28 +35,36 @@
                     <table class="min-w-full divide-y divide-purple-200 dark:divide-purple-500">
                         <thead class="bg-violet-50 dark:bg-violet-950">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Legajo
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Apellido y Nombre
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     DNI
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Fecha de nacimiento
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Correo
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Teléfono
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Dirección
                                 </th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-black dark:text-white uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-black dark:text-white uppercase tracking-wider">
                                     Acciones
                                 </th>
                             </tr>
@@ -88,7 +96,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
 
                                         {{-- Estado académico --}}
-                                        <a href="{{ route('alumnos.estado', $student->id) }}"
+                                        <a href="{{ route('alumnos.estado', ['id' => $student->id, 'from' => 'alumnos']) }}"
                                             class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-500 font-semibold transition">
                                             Estado Académico
                                         </a>
@@ -104,9 +112,9 @@
                                             class="inline-block">
                                             @csrf
                                             @method('DELETE')
-                                            
+
                                             {{-- Botón con clase y data attribute para el script --}}
-                                            <button type="submit" 
+                                            <button type="submit"
                                                 class="text-pink-600 hover:text-pink-800 dark:text-pink-400 dark:hover:text-pink-300 ml-2 font-semibold btn-eliminar-alumno transition"
                                                 data-nombre="{{ $student->apellido }}, {{ $student->nombre }}">
                                                 Eliminar

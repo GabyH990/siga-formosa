@@ -29,7 +29,7 @@
     </div>
     <div class="flex justify-center mt-6">
     <a href="{{ route('panel') }}"
-       class="text-black dark:text-white bg-purple-500 hover:bg-purple-700 font-bold py-2 px-6 rounded">
+       class="text-white bg-purple-500 hover:bg-purple-700 font-bold py-2 px-6 rounded">
         Volver al Panel
     </a>
 </x-app-interno-layout>

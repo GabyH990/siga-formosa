@@ -6,13 +6,6 @@
 
     <div class="space-y-6">
 
-        {{-- Mensajes --}}
-        @if (session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
-
         {{-- Barra superior --}}
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1] ">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-violet-950 shadow rounded-lg p-6">

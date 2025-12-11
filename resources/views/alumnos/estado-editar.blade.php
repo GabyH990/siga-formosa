@@ -6,10 +6,10 @@
     </x-slot>
 
     <div class="space-y-6" x-data="{ estado: 'Regular', tipoAprobacion: '' }">
-        
+
         {{-- ==========================
-             DATOS DEL ALUMNO
-             ========================== --}}
+        DATOS DEL ALUMNO
+        ========================== --}}
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
@@ -17,14 +17,14 @@
                 </h2>
                 <p class="text-sm text-gray-700 dark:text-gray-300">
                     Legajo: <span class="font-semibold">{{ $student->legajo }}</span>
-                    
+
                     @if($student->career)
                         <span class="mx-2">|</span> Carrera:
                         <span class="font-semibold">
                             {{ $student->career->codigo }} - {{ $student->career->nombre }}
                         </span>
                     @endif
-                    
+
                     @if($student->cohorte)
                         <span class="mx-2">|</span> Cohorte:
                         <span class="font-semibold">{{ $student->cohorte }}</span>
@@ -34,8 +34,8 @@
         </div>
 
         {{-- ==========================
-             FORMULARIO DE CARGA
-             ========================== --}}
+        FORMULARIO DE CARGA
+        ========================== --}}
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -43,7 +43,8 @@
                 </h3>
 
                 {{-- Formulario con ID para el script --}}
-                <form id="form-estado-academico" method="POST" action="{{ route('alumnos.estado.guardar', $student->id) }}" class="space-y-4">
+                <form id="form-estado-academico" method="POST"
+                    action="{{ route('alumnos.estado.guardar', $student->id) }}" class="space-y-4">
                     @csrf
 
                     {{-- Materia --}}
@@ -51,8 +52,7 @@
                         <label class="block text-sm font-medium text-gray-900 dark:text-white">
                             Materia
                         </label>
-                        <select name="subject_id" id="subject_id" required
-                                class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                        <select name="subject_id" id="subject_id" required class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                        bg-white text-gray-700
                                        focus:border-violet-500 focus:ring-violet-500
                                        dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
@@ -69,8 +69,7 @@
                         <label class="block text-sm font-medium text-gray-900 dark:text-white">
                             Comisión (opcional)
                         </label>
-                        <select name="commission_nombre"
-                                class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                        <select name="commission_nombre" class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                        bg-white text-gray-700
                                        focus:border-violet-500 focus:ring-violet-500
                                        dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
@@ -87,8 +86,7 @@
                         <label class="block text-sm font-medium text-gray-900 dark:text-white">
                             Estado
                         </label>
-                        <select name="estado" id="estado" x-model="estado" required
-                                class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                        <select name="estado" id="estado" x-model="estado" required class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                        bg-white text-gray-700
                                        focus:border-violet-500 focus:ring-violet-500
                                        dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
@@ -104,8 +102,7 @@
                         <label class="block text-sm font-medium text-gray-900 dark:text-white">
                             Año de regularización
                         </label>
-                        <input type="number" name="anio_regularizacion"
-                               class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                        <input type="number" name="anio_regularizacion" class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                       bg-white text-gray-700
                                       focus:border-violet-500 focus:ring-violet-500
                                       dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
@@ -113,7 +110,8 @@
                     </div>
 
                     {{-- Datos de aprobación (solo Aprobada) --}}
-                    <div x-show="estado === 'Aprobada'" x-cloak class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <div x-show="estado === 'Aprobada'" x-cloak
+                        class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                         <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                             Datos de aprobación
                         </h4>
@@ -123,8 +121,7 @@
                             <label class="block text-sm font-medium text-gray-900 dark:text-white">
                                 Tipo de aprobación
                             </label>
-                            <select name="tipo_aprobacion" id="tipo_aprobacion" x-model="tipoAprobacion"
-                                    class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                            <select name="tipo_aprobacion" id="tipo_aprobacion" x-model="tipoAprobacion" class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                            bg-white text-gray-700
                                            focus:border-violet-500 focus:ring-violet-500
                                            dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
@@ -140,22 +137,23 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 dark:text-white">Libro</label>
                                 <input type="text" name="libro"
-                                       class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
+                                    class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 dark:text-white">Tomo</label>
                                 <input type="text" name="tomo"
-                                       class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
+                                    class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 dark:text-white">Folio</label>
                                 <input type="text" name="acta"
-                                       class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
+                                    class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-900 dark:text-white">Nota final</label>
+                                <label class="block text-sm font-medium text-gray-900 dark:text-white">Nota
+                                    final</label>
                                 <input type="number" step="0.01" name="nota_final"
-                                       class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
+                                    class="mt-1 block w-full rounded-md border-violet-300 shadow-sm bg-white text-gray-700 focus:border-violet-500 focus:ring-violet-500 dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
                             </div>
                         </div>
                     </div>
@@ -165,23 +163,21 @@
                         <label class="block text-sm font-medium text-gray-900 dark:text-white">
                             Observaciones (opcional)
                         </label>
-                        <textarea name="observaciones" rows="3"
-                                  class="mt-1 block w-full rounded-md border-violet-300 shadow-sm 
+                        <textarea name="observaciones" rows="3" class="mt-1 block w-full rounded-md border-violet-300 shadow-sm
                                          bg-white text-gray-700
                                          focus:border-violet-500 focus:ring-violet-500
                                          dark:bg-indigo-300 dark:border-violet-600 dark:text-black"></textarea>
                     </div>
 
-                    {{-- Botones --}}
                     <div class="flex justify-end gap-3 pt-4">
                         <a href="{{ route('alumnos.estado', $student->id) }}"
-                           class="px-4 py-2 rounded-md text-sm font-semibold border border-purple-300 text-white bg-purple-500 hover:bg-purple-700 transition">
+                            class="px-4 py-2 rounded-md text-sm font-semibold border border-purple-300 text-white bg-purple-500 hover:bg-purple-700 transition">
                             Cancelar
                         </a>
-                        
+
                         {{-- Botón con ID para script --}}
                         <button type="submit" id="btn-guardar-estado"
-                                class="px-4 py-2 rounded-md text-sm font-semibold text-white bg-indigo-500 hover:bg-indigo-700 transition">
+                            class="px-4 py-2 rounded-md text-sm font-semibold text-white bg-indigo-500 hover:bg-indigo-700 transition">
                             Guardar
                         </button>
                     </div>
@@ -190,8 +186,8 @@
         </div>
 
         {{-- ==========================
-             RESUMEN DE ESTADOS
-             ========================== --}}
+        RESUMEN DE ESTADOS
+        ========================== --}}
         <div class="p-[1px] rounded-lg bg-gradient-to-r from-[#ca98f5] to-[#6daff1]">
             <div class="bg-white dark:bg-violet-950 shadow rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -210,7 +206,8 @@
                                     <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Materia</th>
                                     <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Comisión</th>
                                     <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Estado</th>
-                                    <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Tipo aprobación</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Tipo
+                                        aprobación</th>
                                     <th class="px-4 py-2 text-left font-medium text-gray-900 dark:text-white">Nota</th>
                                 </tr>
                             </thead>
@@ -276,23 +273,23 @@
 
                     const estado = form.querySelector('[name="estado"]').value;
                     const tipoAprobSelect = form.querySelector('[name="tipo_aprobacion"]');
-                    const tipoAprob = (tipoAprobSelect && tipoAprobSelect.value) 
-                        ? tipoAprobSelect.options[tipoAprobSelect.selectedIndex].text 
+                    const tipoAprob = (tipoAprobSelect && tipoAprobSelect.value)
+                        ? tipoAprobSelect.options[tipoAprobSelect.selectedIndex].text
                         : '';
 
                     // 3) SweetAlert
                     Swal.fire({
                         title: '¿Guardar estado académico?',
                         html: `
-                            <div style="text-align:left">
-                                <p><strong>Materia:</strong> ${materiaTexto || '—'}</p>
-                                <p><strong>Estado:</strong> ${estado || '—'}</p>
-                                ${estado === 'Aprobada'
-                                    ? `<p><strong>Tipo:</strong> ${tipoAprob || '—'}</p>`
-                                    : ''
-                                }
-                            </div>
-                        `,
+                                <div style="text-align:left">
+                                    <p><strong>Materia:</strong> ${materiaTexto || '—'}</p>
+                                    <p><strong>Estado:</strong> ${estado || '—'}</p>
+                                    ${estado === 'Aprobada'
+                                ? `<p><strong>Tipo:</strong> ${tipoAprob || '—'}</p>`
+                                : ''
+                            }
+                                </div>
+                            `,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#6366f1', // Indigo-500

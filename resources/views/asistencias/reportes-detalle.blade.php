@@ -73,7 +73,7 @@
                                             @endforeach
                                             <td class="px-3 py-2 text-sm text-center">
                                                 <button type="submit"
-                                                        class="px-3 py-1 bg-indigo-400 text-white rounded hover:bg-indigo-700">
+                                                        class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-700">
                                                     Guardar
                                                 </button>
                                             </td>
@@ -91,7 +91,7 @@
                             'subject_id'    => $commission->subject_id,
                             'commission_id' => $commission->id,
                         ]) }}"
-                       class="inline-flex items-center px-6 py-3 bg-indigo-400 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                       class="inline-flex items-center px-6 py-3 bg-indigo-500 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Ver porcentajes e incumplidores
                     </a>
                 </div>

@@ -24,7 +24,7 @@
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-1">
                                 Cátedra
                             </label>
-                            <select name="subject_id" class="w-full rounded-md border-gray-300 shadow-sm
+                            <select name="subject_id" class="w-full rounded-md border-violet-200 shadow-sm
                                        focus:border-violet-500 focus:ring-violet-500
                                        dark:bg-indigo-300 dark:border-violet-600 dark:text-black">
                                 <option value="">Seleccione cátedra...</option>
@@ -47,9 +47,9 @@
 
                     <div class="mt-4">
                         <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-400 border border-transparent
+                            class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent
                                    rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                                   hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Ver planillas
                         </button>
                     </div>

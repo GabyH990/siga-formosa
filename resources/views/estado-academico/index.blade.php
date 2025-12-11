@@ -123,13 +123,14 @@
                                     {{-- Acciones --}}
                                     <td class="px-4 py-2 whitespace-nowrap">
                                         <div class="flex flex-wrap gap-2">
-                                            <a href="{{ route('alumnos.estado', $student->id) }}" class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md
-                                                      text-black bg-indigo-300 hover:bg-indigo-500">
+                                            <a href="{{ route('alumnos.estado', ['id' => $student->id, 'from' => 'estado_academico']) }}"
+                                                class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md
+                                                          text-black bg-indigo-300 hover:bg-indigo-500">
                                                 Ver detalle
                                             </a>
 
                                             <a href="{{ route('alumnos.estado.editar', $student->id) }}" class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md
-                                                      text-black bg-purple-300 hover:bg-apurple-500">
+                                                          text-black bg-purple-300 hover:bg-apurple-500">
                                                 Editar
                                             </a>
                                         </div>
