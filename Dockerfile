@@ -42,9 +42,6 @@ EXPOSE 8000
 # -----------------------------------------------------------
 # 9. SCRIPT DE INICIO (Con Cache Strategy)
 # -----------------------------------------------------------
-# Explicación del cambio:
-# 1. config:clear primero para que las migraciones lean las variables de entorno crudas.
-# 2. config:cache AL FINAL para "congelar" esas variables correctas para que el servidor las use.
 RUN printf "#!/bin/sh\n\
 set -e\n\
 \n\
@@ -52,6 +49,8 @@ echo '🚀 Iniciando contenedor...'\n\
 \n\
 echo '🧹 Limpiando caché para migraciones...'\n\
 php artisan config:clear\n\
+\n\
+php artisan storage:link || true\n\
 \n\
 echo '📦 Ejecutando migraciones...'\n\
 php artisan migrate --force\n\
