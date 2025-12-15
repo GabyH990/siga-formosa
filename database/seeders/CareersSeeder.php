@@ -8,8 +8,15 @@ use App\Models\Career;
 class CareersSeeder extends Seeder
 {
     public function run(): void
-    {
-        Career::create(['nombre' => 'Tecnicatura Universitaria en Programación', 'codigo' => 'TUP']);
-        Career::create(['nombre' => 'Licenciatura en Producción de Bioimágenes', 'codigo' => 'LPB']);
-    }
+{
+    Career::firstOrCreate(
+        ['codigo' => 'TUP'],
+        ['nombre' => 'Tecnicatura Universitaria en Programación']
+    );
+
+    Career::firstOrCreate(
+        ['codigo' => 'LPB'],
+        ['nombre' => 'Licenciatura en Producción de Bioimágenes']
+    );
+}
 }
