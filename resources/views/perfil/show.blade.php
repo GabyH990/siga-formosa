@@ -66,6 +66,11 @@
             </div>
         </div>
     </div>
+    <div class="flex justify-center mt-6">
+            <a href="{{ route('panel') }}" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded">
+                Volver al Panel
+            </a>
+        </div>
 
     {{-- SweetAlert2 --}}
     @push('scripts')
