@@ -547,7 +547,7 @@ class AsistenciaController extends Controller
                 : 0;
 
             // Incumplidor si P+AJ / total <= 75%
-            $incumple = $totalClases > 0 && $porcentaje <= 75;
+            $incumple = $totalClases > 0 && $porcentaje < 75;
 
             $resumen[] = [
                 'student' => $student,
