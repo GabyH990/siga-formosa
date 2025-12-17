@@ -27,9 +27,9 @@ class UsersSeeder extends Seeder
 
         // --- INSERCIÓN CON firstOrCreate (Idempotencia) ---
 
-        // 1. Super Admin (admin@siga.test)
+        // 1. Super Admin (admin@gmail.com)
         User::firstOrCreate(
-            ['email' => 'admin@siga.test'], // Criterio de búsqueda (UNIQUE: email)
+            ['email' => 'admin@gmail.com'], // Criterio de búsqueda (UNIQUE: email)
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
@@ -38,9 +38,9 @@ class UsersSeeder extends Seeder
             ]
         );
 
-        // 2. Bedel TUP (bedel.tup@siga.test)
+        // 2. Bedel TUP (bedel.tup@sgmail.com)
         User::firstOrCreate(
-            ['email' => 'bedel.tup@siga.test'],
+            ['email' => 'bedeltup@gmail.com'],
             [
                 'name' => 'Bedel TUP',
                 'password' => Hash::make('password'),
